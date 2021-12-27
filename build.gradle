@@ -1,0 +1,19 @@
+plugins {
+    id 'java'
+}
+
+allprojects {
+    version = '1.0.0'
+    group = 'org.sk.gradle.sample'
+
+    repositories {
+        jcenter()
+    }
+}
+
+subprojects {
+
+    tasks.withType(Test).configureEach {
+        useJUnitPlatform()
+    }
+}
