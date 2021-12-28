@@ -1,0 +1,30 @@
+plugins {
+    id 'java-library'
+}
+
+//see: https://docs.gradle.org/current/userguide/java_testing.html#sec:java_testing_modular
+def moduleName = "org.gradle.sample.messenger"
+def patchArgs = ["--patch-module", "$moduleName=${tasks.compileJava.destinationDirectory.asFile.get().path}"]
+tasks.named('compileTestJava') {
+    options.compilerArgs += patchArgs
+}
+tasks.named('test') {
+    jvmArgs += patchArgs
+}
+
+
+dependencies {
+    testRuntimeOnly project(':clever-message-provider')
+
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.2'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
+
+    //see https://github.com/junit-team/junit5/issues/2730
+    //see https://github.com/gradle/gradle/issues/18627
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+
+test{
+    useJUnitPlatform()
+}
