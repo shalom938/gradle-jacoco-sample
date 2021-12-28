@@ -1,2 +1,5 @@
 rootProject.name = 'gradle-jacoco-sample'
 include 'application', 'list', 'utilities'
+include 'messenger'
+include 'clever-message-provider'
+

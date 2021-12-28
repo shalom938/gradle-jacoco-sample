@@ -1,6 +1,12 @@
-plugins {
-    id 'java'
-}
+
+///todo: dependency management
+//dependencyManagement {
+//    imports {
+//        mavenBom "org.junit:junit-bom:5.5.2"
+//    }
+//}
+
+
 
 allprojects {
     version = '1.0.0'
@@ -16,4 +22,8 @@ subprojects {
     tasks.withType(Test).configureEach {
         useJUnitPlatform()
     }
+
+
+
+
 }
