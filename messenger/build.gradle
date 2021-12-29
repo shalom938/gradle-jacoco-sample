@@ -1,0 +1,24 @@
+plugins {
+    id 'java-library'
+    //using version catalogs, same as: id 'org.javamodularity.moduleplugin'
+    alias(pluginslibs.plugins.moduleplugin)
+}
+
+
+dependencies {
+
+    implementation libs.commons.lang3
+//    implementation 'org.apache.commons:commons-lang3:3.12.0'
+
+    testRuntimeOnly project(':cmd-message-provider')
+
+    testImplementation testinglibs.junit.jupiter
+}
+
+
+test{
+    testLogging {
+        showStandardStreams = true
+        events "passed", "skipped", "failed"
+    }
+}

@@ -1,2 +1,30 @@
 rootProject.name = 'gradle-jacoco-sample'
-include 'application', 'list', 'utilities'
+include 'application'
+include 'list'
+include 'utilities'
+include 'messenger'
+include 'cmd-message-provider'
+
+
+
+enableFeaturePreview('VERSION_CATALOGS')
+
+dependencyResolutionManagement {
+    versionCatalogs {
+        libs {
+            //version('groovy', '3.0.5')
+            alias('commons-lang3').to('org.apache.commons:commons-lang3:3.12.0')
+        }
+        testinglibs {
+            alias('junit-jupiter').to('org.junit.jupiter:junit-jupiter:5.8.2')
+//            alias('commons-lang3').to('org.apache.commons', 'commons-lang3').version {
+//                strictly '[3.8, 4.0['
+//                prefer '3.9'
+            //bundle('groovy', ['groovy-core', 'groovy-json', 'groovy-nio'])
+        }
+        pluginslibs {
+            alias('moduleplugin').toPluginId('org.javamodularity.moduleplugin').version('1.8.10')
+        }
+
+    }
+}

@@ -1,13 +1,18 @@
-plugins {
-    id 'java'
-}
+//plugins {
+//    id 'org.javamodularity.moduleplugin' version '1.8.10' apply false
+//}
+
+
+//TODO:
+// toolchain
+// add another provider module:
 
 allprojects {
     version = '1.0.0'
     group = 'org.sk.gradle.sample'
 
     repositories {
-        jcenter()
+        mavenCentral()
     }
 }
 
