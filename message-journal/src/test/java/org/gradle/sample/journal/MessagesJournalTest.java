@@ -11,7 +11,7 @@ public class MessagesJournalTest {
 
     @BeforeAll
     public static void beforeTest() {
-        System.setProperty("org.gradle.sample.journal.string.size", JOURNAL_SIZE.toString());
+        System.setProperty("org.gradle.sample.journal.string.maxSize", JOURNAL_SIZE.toString());
     }
 
 

@@ -1,6 +1,7 @@
 package org.gradle.sample.journal;
 
 import org.gradle.sample.journal.impl.StringJournal;
+import org.gradle.sample.utilities.MessageFormatter;
 
 import java.util.List;
 
@@ -53,7 +54,10 @@ public interface MessagesJournal extends Journal<String> {
 
 
     private String messagePreview(String msg) {
-        return msg.substring(0, Math.min(msg.length() - 1, 30)) + "...";
+        //todo: intellij doesn't see utilities as automatic modules.
+        // builds fine with gradle and also builds fine with intellij but the editor shows errors
+        // https://youtrack.jetbrains.com/issue/IDEA-183692
+        return MessageFormatter.messagePreview(msg);
     }
 
 }

@@ -9,12 +9,10 @@ plugins {
 
 
 dependencies {
-//    implementation project(':list')
-//    implementation project(':utilities')
     implementation project(':messenger')
     implementation project(':cmd-message-provider')
     implementation project(':env-message-provider')
-//    implementation libs.commons.lang3
+    implementation project(':utilities')
     implementation libs.commons.text
 
     testImplementation testinglibs.junit.jupiter

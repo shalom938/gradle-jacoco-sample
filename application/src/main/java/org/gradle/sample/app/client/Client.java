@@ -14,7 +14,6 @@ import static org.gradle.sample.app.Main.PORT;
 
 public class Client {
 
-
     private final HttpClient httpClient;
     private final String host;
     private final int port;
@@ -26,10 +25,9 @@ public class Client {
     public Client(String host, int port) {
         this.host = host;
         this.port = port;
-
         httpClient = HttpClient.newBuilder()
-                .connectTimeout(Duration.ofSeconds(5))
-                .build();
+                        .connectTimeout(Duration.ofSeconds(5))
+                        .build();
     }
 
 

@@ -2,6 +2,25 @@ plugins {
     id 'java-library'
 }
 
+//demonstrates hot to use this ,module as automatic module
+jar {
+    manifest {
+        attributes('Automatic-Module-Name': project.name)
+    }
+}
+
+
 dependencies {
-    implementation project(':list')
+    testImplementation testinglibs.junit.jupiter
+}
+
+
+test {
+    testLogging {
+        showStandardStreams project.hasProperty("show.unit.tests.stdout")
+        events "passed", "skipped", "failed"
+        showStackTraces true
+        exceptionFormat 'full'
+        showCauses true
+    }
 }

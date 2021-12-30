@@ -4,7 +4,7 @@ plugins {
 
 dependencies {
 
-    //could be implementation but messenger is only necessary for compile and test
+    //could use 'implementation' but messenger is only necessary for compile and test
     //implementation project(':messenger')
 
     compileOnly project(':messenger')

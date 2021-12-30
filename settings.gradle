@@ -1,11 +1,10 @@
 rootProject.name = 'gradle-jacoco-sample'
-include 'application'
-include 'list'
 include 'utilities'
 include 'cmd-message-provider'
 include 'env-message-provider'
 include 'message-journal'
 include 'messenger'
+include 'application'
 
 
 enableFeaturePreview('VERSION_CATALOGS')

@@ -6,7 +6,6 @@ import java.util.Optional;
 
 public interface MessageProvider {
 
-
     Optional<String> nextMessage();
 
     default String capitalize(String message) {

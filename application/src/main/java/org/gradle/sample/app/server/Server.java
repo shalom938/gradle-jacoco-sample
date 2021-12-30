@@ -5,6 +5,8 @@ import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
 import org.gradle.sample.messenger.Messenger;
+import org.gradle.sample.utilities.HttpUtils;
+import org.gradle.sample.utilities.MessageFormatter;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -74,6 +76,10 @@ public class Server {
         }
 
 
+        //todo: intellij doesn't see utilities as automatic modules.
+        // builds fine with gradle and also builds fine with intellij but the editor shows errors
+        // https://youtrack.jetbrains.com/issue/IDEA-183692
+
         private void handleResponse(HttpExchange httpExchange, Map<String, String> allMessages) throws IOException {
 
             OutputStream outputStream = httpExchange.getResponseBody();
@@ -81,21 +87,28 @@ public class Server {
             StringBuilder htmlBuilder = new StringBuilder();
             htmlBuilder.append("<html>").append("<body>");
 
+            var queryParams = HttpUtils.getQueryParamMap(httpExchange.getRequestURI().getQuery());
 
             allMessages.forEach((k, v) -> {
                 System.out.println("got message from ".concat(k).concat(", message: ").concat(v));
 
                 htmlBuilder.append("<h1> ------------------ </h1>");
                 htmlBuilder.append("<h1>");
-                htmlBuilder.append(k + ":" + v);
+
+                if ("short".equals(queryParams.get("format"))) {
+                    htmlBuilder.append(k + ":" + MessageFormatter.messagePreview(v));
+                } else {
+                    htmlBuilder.append(k + ":" + v);
+                }
+
                 htmlBuilder.append("</h1>");
             });
 
             htmlBuilder.append("</body>");
             htmlBuilder.append("</html>");
 
-            // encode HTML content
-//            String htmlResponse = StringEscapeUtils.escapeHtml4(htmlBuilder.toString());
+            //// encode HTML content
+            ////String htmlResponse = StringEscapeUtils.escapeHtml4(htmlBuilder.toString());
             byte[] htmlResponse = htmlBuilder.toString().getBytes();
             // this line is a must
             httpExchange.sendResponseHeaders(200, htmlResponse.length);
@@ -110,7 +123,6 @@ public class Server {
 
         @Override
         public void handle(HttpExchange exchange) throws IOException {
-            System.out.println("in shutdown handler");
             String response = "Shutting down..";
             exchange.sendResponseHeaders(200, response.length());
             OutputStream os = exchange.getResponseBody();
@@ -147,6 +159,8 @@ public class Server {
             e.printStackTrace();
         }
         executorService.shutdownNow();
+        System.out.println("Executor service stopped.");
     }
+
 
 }

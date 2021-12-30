@@ -13,8 +13,8 @@ public class StringJournal implements Journal<String> {
     private final static StringJournal INSTANCE = new StringJournal();
 
     private StringJournal() {
-        String size = System.getProperty("org.gradle.sample.journal.string.size", "100");
-        this.evictingQueue = EvictingQueue.create(Integer.valueOf(size));
+        String maxSize = System.getProperty("org.gradle.sample.journal.string.maxSize", "100");
+        this.evictingQueue = EvictingQueue.create(Integer.valueOf(maxSize));
     }
 
     public static StringJournal getInstance() {
