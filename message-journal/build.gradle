@@ -1,19 +1,12 @@
 plugins {
     id 'java-library'
-    //using versions catalogs, same as: id 'org.javamodularity.moduleplugin'
-    alias(pluginslibs.plugins.moduleplugin)
 }
-
 
 dependencies {
 
-    implementation project(':message-journal')
-    implementation libs.commons.lang3
+    implementation libs.google.guava
 
     testImplementation testinglibs.junit.jupiter
-
-    testRuntimeOnly project(':cmd-message-provider')
-    testRuntimeOnly project(':env-message-provider')
 }
 
 

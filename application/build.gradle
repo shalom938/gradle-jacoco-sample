@@ -1,17 +1,36 @@
 plugins {
     id 'application'
+    alias(pluginslibs.plugins.moduleplugin)
 }
 
+
+//TODO:
+// integration tests
+
+
 dependencies {
-    implementation project(':list')
-    implementation project(':utilities')
+//    implementation project(':list')
+//    implementation project(':utilities')
+    implementation project(':messenger')
+    implementation project(':cmd-message-provider')
+    implementation project(':env-message-provider')
+//    implementation libs.commons.lang3
+    implementation libs.commons.text
 
     testImplementation testinglibs.junit.jupiter
-
-
-    implementation 'org.apache.commons:commons-lang3:3.12.0'
 }
 
 application {
-    mainClass = 'org.gradle.sample.Main'
+    mainClass = 'org.gradle.sample.app.Main'
+}
+
+
+test{
+    testLogging {
+        showStandardStreams project.hasProperty("show.unit.tests.stdout")
+        events "passed", "skipped", "failed"
+        showStackTraces true
+        exceptionFormat 'full'
+        showCauses true
+    }
 }

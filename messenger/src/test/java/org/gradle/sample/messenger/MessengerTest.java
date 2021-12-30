@@ -12,8 +12,10 @@ class MessengerTest {
 
 
     @Test
-    void testMessage() throws ReflectiveOperationException {
+    void testMessage(){
 
+        //just for exploring the java command line and for demonstrating how to add a java module
+        //only for tests, in this case java.management
         System.out.println("command line arguments in unit test MessengerTest:");
         ManagementFactory.getRuntimeMXBean().getInputArguments().forEach(s -> System.out.println("arg: "+s));
 

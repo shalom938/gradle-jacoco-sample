@@ -5,7 +5,11 @@
 
 //TODO:
 // toolchain
-// add another provider module:
+// add another provider module that prints all modules loaded
+// change the package name org.gradle to sk
+// try with resources example
+// use var
+// add logging
 
 allprojects {
     version = '1.0.0'
