@@ -2,7 +2,6 @@ package org.gradle.sample.app;
 
 import org.gradle.sample.app.server.Server;
 import org.gradle.sample.messenger.spi.MessageProvider;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -15,14 +14,14 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class ProvidersExistenceTest {
 
     @BeforeAll
-    public static void addUses(){
+    public static void addUses() {
         Server.class.getModule().addUses(org.gradle.sample.messenger.spi.MessageProvider.class);
     }
 
 
     @Test
-    public void testProvidersExistence(){
+    public void testProvidersExistence() {
         ServiceLoader<MessageProvider> serviceLoader = ServiceLoader.load(MessageProvider.class);
-        assertEquals(2,serviceLoader.stream().count(),"two services should be in classpath/modulepath");
+        assertEquals(2, serviceLoader.stream().count(), "two services should be in classpath/modulepath");
     }
 }

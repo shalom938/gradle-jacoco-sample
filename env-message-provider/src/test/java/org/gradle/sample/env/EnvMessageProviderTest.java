@@ -9,8 +9,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class EnvMessageProviderTest {
 
     @Test
-    void testCmdProvider(){
+    void testCmdProvider() {
         Optional<String> msg = new EnvMessageProvider().nextMessage();
-        assertNotNull(msg.orElse(null),"EnvMessageProvider returned null message");
+        assertNotNull(msg.orElse(null), "EnvMessageProvider returned null message");
     }
 }

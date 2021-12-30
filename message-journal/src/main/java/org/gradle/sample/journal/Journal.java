@@ -17,5 +17,4 @@ public interface Journal<T> {
     boolean contains(T obj);
 
 
-
 }

@@ -9,7 +9,7 @@ public class Main {
     public static final String ADDR = "localhost";
     public static final int PORT = 8001;
 
-    public static void main(String[] args) throws IOException{
+    public static void main(String[] args) throws IOException {
 
         Server server = new Server();
         server.start();

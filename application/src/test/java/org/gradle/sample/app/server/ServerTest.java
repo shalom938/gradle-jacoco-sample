@@ -18,25 +18,25 @@ public class ServerTest {
 
     @BeforeAll
     public static void startServer() throws IOException {
-        Server server = new Server(ADDR,PORT);
+        Server server = new Server(ADDR, PORT);
         server.start();
     }
 
     @AfterAll
     public static void stopServer() throws URISyntaxException, IOException, InterruptedException {
-        Client client = new Client(ADDR,PORT);
+        Client client = new Client(ADDR, PORT);
         client.sendGet("shutdown");
     }
 
 
     @Test
     public void testMessages() throws URISyntaxException, IOException, InterruptedException {
-        Client client = new Client(ADDR,PORT);
+        Client client = new Client(ADDR, PORT);
         Client.Response response = client.sendGet("msgs");
-        assertNotNull(response,"client returned null response");
-        assertEquals(200,response.getStatusCode(),"status code is not OK");
-        assertNotNull(response.getBody(),"body is null");
-        System.out.println("Response Body: "+response.getBody());
+        assertNotNull(response, "client returned null response");
+        assertEquals(200, response.getStatusCode(), "status code is not OK");
+        assertNotNull(response.getBody(), "body is null");
+        System.out.println("Response Body: " + response.getBody());
 
     }
 

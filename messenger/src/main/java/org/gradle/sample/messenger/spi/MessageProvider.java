@@ -9,7 +9,7 @@ public interface MessageProvider {
 
     Optional<String> nextMessage();
 
-    default String capitalize(String message){
+    default String capitalize(String message) {
         return StringUtils.capitalize(message);
     }
 

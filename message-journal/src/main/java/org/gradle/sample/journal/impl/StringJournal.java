@@ -13,17 +13,17 @@ public class StringJournal implements Journal<String> {
     private final static StringJournal INSTANCE = new StringJournal();
 
     private StringJournal() {
-        String size = System.getProperty("org.gradle.sample.journal.string.size","100");
+        String size = System.getProperty("org.gradle.sample.journal.string.size", "100");
         this.evictingQueue = EvictingQueue.create(Integer.valueOf(size));
     }
 
-    public static StringJournal getInstance(){
+    public static StringJournal getInstance() {
         return INSTANCE;
     }
 
     @Override
     public boolean add(String item) {
-        Objects.requireNonNull(item,"StringJournal does not allow null elements");
+        Objects.requireNonNull(item, "StringJournal does not allow null elements");
         return evictingQueue.add(item);
     }
 

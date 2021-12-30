@@ -20,7 +20,7 @@ public class Client {
     private final int port;
 
     public Client() {
-        this(ADDR,PORT);
+        this(ADDR, PORT);
     }
 
     public Client(String host, int port) {
@@ -33,9 +33,8 @@ public class Client {
     }
 
 
-
     public Response sendGet(String path) throws URISyntaxException, IOException, InterruptedException {
-        HttpRequest httpRequest = HttpRequest.newBuilder(new URI("http://"+host+":"+port+"/"+path))
+        HttpRequest httpRequest = HttpRequest.newBuilder(new URI("http://" + host + ":" + port + "/" + path))
                 .GET()
                 .timeout(Duration.of(10, ChronoUnit.SECONDS))
                 .build();
@@ -58,10 +57,9 @@ public class Client {
     }
 
 
-
-
-    public abstract static class Response{
+    public abstract static class Response {
         public abstract int getStatusCode();
+
         public abstract String getBody();
     }
 

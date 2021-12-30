@@ -25,7 +25,7 @@ application {
 }
 
 
-test{
+test {
     testLogging {
         showStandardStreams project.hasProperty("show.unit.tests.stdout")
         events "passed", "skipped", "failed"

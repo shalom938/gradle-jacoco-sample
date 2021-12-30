@@ -52,8 +52,8 @@ public interface MessagesJournal extends Journal<String> {
     }
 
 
-    private String messagePreview(String msg){
-        return msg.substring(0, Math.min(msg.length()-1,30)) + "...";
+    private String messagePreview(String msg) {
+        return msg.substring(0, Math.min(msg.length() - 1, 30)) + "...";
     }
 
 }
