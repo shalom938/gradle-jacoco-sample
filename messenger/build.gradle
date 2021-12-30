@@ -1,24 +1,27 @@
 plugins {
     id 'java-library'
-    //using version catalogs, same as: id 'org.javamodularity.moduleplugin'
+    //using versions catalogs, same as: id 'org.javamodularity.moduleplugin'
     alias(pluginslibs.plugins.moduleplugin)
 }
 
 
 dependencies {
 
+    implementation project(':message-journal')
     implementation libs.commons.lang3
-//    implementation 'org.apache.commons:commons-lang3:3.12.0'
-
-    testRuntimeOnly project(':cmd-message-provider')
 
     testImplementation testinglibs.junit.jupiter
+    testRuntimeOnly project(':cmd-message-provider')
+    testRuntimeOnly project(':env-message-provider')
 }
 
 
-test{
+test {
     testLogging {
-        showStandardStreams = true
+        showStandardStreams project.hasProperty("show.unit.tests.stdout")
         events "passed", "skipped", "failed"
+        showStackTraces true
+        exceptionFormat 'full'
+        showCauses true
     }
 }

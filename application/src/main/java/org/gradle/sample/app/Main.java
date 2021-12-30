@@ -1,15 +1,26 @@
 package org.gradle.sample.app;
 
-import org.gradle.sample.list.LinkedList;
+import org.gradle.sample.app.client.MessagesClientMain;
+import org.gradle.sample.app.server.Server;
 
-import static org.gradle.sample.utilities.StringUtils.join;
-import static org.gradle.sample.utilities.StringUtils.split;
-import static org.gradle.sample.app.MessageUtils.getMessage;
+import java.io.IOException;
 
 public class Main {
-    public static void main(String[] args) {
-        LinkedList tokens;
-        tokens = split(getMessage());
-        System.out.println(join(tokens));
+
+    public static final String ADDR = "localhost";
+    public static final int PORT = 8001;
+
+    public static void main(String[] args) throws IOException {
+
+        Server server = new Server();
+        server.start();
+
+        MessagesClientMain.main(null);
+
+//        System.out.println("calling server stop");
+//        server.stop();
+//        System.out.println("Server stopped!");
+
     }
+
 }

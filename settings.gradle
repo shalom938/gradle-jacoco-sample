@@ -1,10 +1,10 @@
 rootProject.name = 'gradle-jacoco-sample'
-include 'application'
-include 'list'
 include 'utilities'
-include 'messenger'
 include 'cmd-message-provider'
-
+include 'env-message-provider'
+include 'message-journal'
+include 'messenger'
+include 'application'
 
 
 enableFeaturePreview('VERSION_CATALOGS')
@@ -13,7 +13,9 @@ dependencyResolutionManagement {
     versionCatalogs {
         libs {
             //version('groovy', '3.0.5')
+            alias('google-guava').to('com.google.guava:guava:31.0.1-jre')
             alias('commons-lang3').to('org.apache.commons:commons-lang3:3.12.0')
+            alias('commons-text').to('org.apache.commons:commons-text:1.9')
         }
         testinglibs {
             alias('junit-jupiter').to('org.junit.jupiter:junit-jupiter:5.8.2')
