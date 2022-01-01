@@ -39,8 +39,8 @@ public class StringJournalTest {
 
         List<String> asList1 = journal.list();
         List<String> asList2 = journal.list();
-        assertFalse(asList1 == asList2,"list should be different objects");
-        assertLinesMatch(asList1,asList2,"lists are not equal");
+        assertFalse(asList1 == asList2, "list should be different objects");
+        assertLinesMatch(asList1, asList2, "lists are not equal");
 
     }
 

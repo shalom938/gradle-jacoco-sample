@@ -8,14 +8,13 @@ public interface Journal<T> {
 
     boolean remove(T item);
 
-    int size();
+   int size();
 
     List<T> list();
 
     void clear();
 
     boolean contains(T obj);
-
 
 
 }

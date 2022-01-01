@@ -1,8 +1,7 @@
-import org.gradle.sample.env.EnvMessageProvider;
-import org.gradle.sample.messenger.spi.MessageProvider;
+import org.sk.sample.env.EnvMessageProvider;
+import org.sk.sample.messenger.spi.MessageProvider;
 
 module sample.envMessageProvider {
     requires sample.messenger;
-    provides MessageProvider
-            with EnvMessageProvider;
+    provides MessageProvider with EnvMessageProvider;
 }

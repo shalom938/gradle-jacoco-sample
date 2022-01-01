@@ -11,10 +11,11 @@ public class StringJournal implements Journal<String> {
 
     private EvictingQueue<String> evictingQueue;
 
-     public StringJournal() {
-         this(Integer.parseInt(System.getProperty("org.sk.sample.journal.string.maxSize", "100")));
-     }
-     public StringJournal(int maxSize) {
+    public StringJournal() {
+        this(Integer.parseInt(System.getProperty("org.sk.sample.journal.string.maxSize", "100")));
+    }
+
+    public StringJournal(int maxSize) {
         this.evictingQueue = EvictingQueue.create(maxSize);
     }
 

@@ -22,12 +22,12 @@ dependencies {
 }
 
 application {
-    mainClass = 'org.gradle.sample.app.Main'
+    mainClass = 'org.sk.sample.app.Main'
 }
 
 
 test {
-    onlyIf{
+    onlyIf {
         project.hasProperty("aaaaaaaaaa")
     }
     testLogging {

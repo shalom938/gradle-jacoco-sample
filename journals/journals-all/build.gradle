@@ -1,9 +1,8 @@
-
 //journal-all is a container project for journal and impls, users can depend on journal-all to
 //get the whole package of just depend on journal to get the interfaces.
 
 
-dependencies{
+dependencies {
     //api configuration exposes the dependency transitively to consumers of this module so they can
     //directly use classes in journal at compile time. implementation hides the dependency for compile time form
     //uses of this module.

@@ -25,10 +25,9 @@ public class ReflectionUtil {
             Class<? extends Journal<String>> cls = (Class<? extends Journal<String>>) ClassUtils.getClass(STRING_JOURNAL_CLS);
             return ConstructorUtils.invokeConstructor(cls);
         } catch (ReflectiveOperationException e) {
-            throw new JournalInitException("Could not create String journal, please verify that the journal implementation module is present.",e);
+            throw new JournalInitException("Could not create String journal, please verify that the journal implementation module is present.", e);
         }
     }
-
 
 
     public static Journal<String> createStringJournal(int maxSize) throws JournalInitException {
@@ -36,7 +35,7 @@ public class ReflectionUtil {
             Class<? extends Journal<String>> cls = (Class<? extends Journal<String>>) ClassUtils.getClass(STRING_JOURNAL_CLS);
             return ConstructorUtils.invokeConstructor(cls, maxSize);
         } catch (ReflectiveOperationException e) {
-            throw new JournalInitException("Could not create String journal, please verify that the journal implementation module is present.",e);
+            throw new JournalInitException("Could not create String journal, please verify that the journal implementation module is present.", e);
         }
     }
 

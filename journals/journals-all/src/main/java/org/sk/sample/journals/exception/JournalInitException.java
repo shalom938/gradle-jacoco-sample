@@ -1,6 +1,6 @@
 package org.sk.sample.journals.exception;
 
-public class JournalInitException extends Exception{
+public class JournalInitException extends Exception {
     public JournalInitException() {
     }
 

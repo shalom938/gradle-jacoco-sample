@@ -14,21 +14,21 @@ public class JournalAllTest {
     @Test
     public void testJournalCreate() throws JournalInitException {
         Journal<String> stringJournal = Journals.stringJournal();
-        assertNotNull(stringJournal,"string journal is null");
-        assertTrue(stringJournal.size() == 0,"string journal should be empty");
+        assertNotNull(stringJournal, "string journal is null");
+        assertTrue(stringJournal.size() == 0, "string journal should be empty");
     }
 
     @Test
     public void testJournalMaxSize() throws JournalInitException {
         Journal<String> stringJournal = Journals.stringJournal(5);
-        assertNotNull(stringJournal,"string journal is null");
-        assertTrue(stringJournal.size() == 0,"string journal should be empty");
+        assertNotNull(stringJournal, "string journal is null");
+        assertTrue(stringJournal.size() == 0, "string journal should be empty");
 
         for (int i = 0; i < 10; i++) {
-            stringJournal.add("item-"+i);
+            stringJournal.add("item-" + i);
         }
 
-        assertEquals(5,stringJournal.size(),"journal size should be 5");
+        assertEquals(5, stringJournal.size(), "journal size should be 5");
 
     }
 
