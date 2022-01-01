@@ -1,14 +1,10 @@
-//plugins {
-//    id 'org.javamodularity.moduleplugin' version '1.8.10' apply false
-//}
 
 
 //TODO:
 // toolchain
-// add another provider module that prints all modules loaded
 // try with resources example
-// use var
 // add logging
+
 
 allprojects {
     version = '1.0.0'

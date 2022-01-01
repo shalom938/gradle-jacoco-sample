@@ -6,9 +6,7 @@ plugins {
 
 //TODO:
 // integration tests
-// add exports .. to in module-info where necessary to really hide packages
-// change StringJournal to its own module and use reflection, keep the constructor provate and open
-// reflection to the message-journal module
+
 
 dependencies {
     implementation project(':messaging')
