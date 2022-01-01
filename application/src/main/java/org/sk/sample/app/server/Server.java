@@ -48,7 +48,9 @@ public class Server {
         server = HttpServer.create(new InetSocketAddress(addr, port), 0);
         server.setExecutor(executorService);
         contexts.add(server.createContext("/msgs", new MessagesHttpHandler()));
-        contexts.add(server.createContext("/shutdown", new ShutdownHandler()));
+        //ShutdownHandler is a nested class and is associated with an instance, it needs access
+        // to stop the executor service.
+        contexts.add(server.createContext("/shutdown", this.new ShutdownHandler()));
     }
 
 
@@ -57,6 +59,7 @@ public class Server {
     }
 
 
+    @SuppressWarnings("unused")
     public void stop() {
         contexts.forEach(server::removeContext);
         stopExecutionService();
@@ -64,7 +67,7 @@ public class Server {
     }
 
 
-    class MessagesHttpHandler implements HttpHandler {
+    private static class MessagesHttpHandler implements HttpHandler {
 
         @Override
         public void handle(HttpExchange exchange) throws IOException {
@@ -117,7 +120,7 @@ public class Server {
     }
 
 
-    class ShutdownHandler implements HttpHandler {
+    private class ShutdownHandler implements HttpHandler {
 
         @Override
         public void handle(HttpExchange exchange) throws IOException {
