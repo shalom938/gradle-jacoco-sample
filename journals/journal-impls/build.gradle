@@ -1,0 +1,8 @@
+
+
+
+
+dependencies{
+    implementation project(':journal')
+    implementation libs.google.guava
+}

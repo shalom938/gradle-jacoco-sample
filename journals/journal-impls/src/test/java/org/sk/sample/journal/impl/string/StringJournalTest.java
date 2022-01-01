@@ -1,24 +1,20 @@
-package org.gradle.sample.journal;
+package org.sk.sample.journal.impl.string;
 
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class MessagesJournalTest {
+public class StringJournalTest {
 
     private static Integer JOURNAL_SIZE = 5;
-
-    @BeforeAll
-    public static void beforeTest() {
-        System.setProperty("org.sk.sample.journal.string.maxSize", JOURNAL_SIZE.toString());
-    }
 
 
     @Test
     void testMessagesJournal() {
 
-        MessagesJournal journal = MessagesJournal.create();
+        StringJournal journal = new StringJournal(JOURNAL_SIZE);
         journal.add("item-1");
         journal.add("item-1");
         assertEquals(2, journal.size(), "journal size should be 2");
@@ -41,12 +37,10 @@ public class MessagesJournalTest {
         assertFalse(journal.contains("item-9"), "journal should NOT contain item-9");
         assertEquals(JOURNAL_SIZE - 1, journal.size(), "journal size should be " + (JOURNAL_SIZE - 1));
 
-        String stats = journal.stats();
-        assertNotNull(stats, "stats is null");
-        //the journal size at this point is JOURNAL_SIZE-1, and we know that the stats string has 1 header line
-        //plus a line for each message
-        assertEquals((long) JOURNAL_SIZE, stats.lines().count(), "stats string should have ");
-        System.out.println("journal stats: " + stats);
+        List<String> asList1 = journal.list();
+        List<String> asList2 = journal.list();
+        assertFalse(asList1 == asList2,"list should be different objects");
+        assertLinesMatch(asList1,asList2,"lists are not equal");
 
     }
 

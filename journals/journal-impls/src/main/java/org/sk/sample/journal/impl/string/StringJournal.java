@@ -1,25 +1,23 @@
-package org.gradle.sample.journal.impl;
+package org.sk.sample.journal.impl.string;
 
 import com.google.common.collect.EvictingQueue;
-import org.gradle.sample.journal.Journal;
+import org.sk.sample.journal.Journal;
 
 import java.util.List;
 import java.util.Objects;
 
+@SuppressWarnings("ALL") //EvictingQueue is beta
 public class StringJournal implements Journal<String> {
 
-    private final EvictingQueue<String> evictingQueue;
+    private EvictingQueue<String> evictingQueue;
 
-    private final static StringJournal INSTANCE = new StringJournal();
-
-    private StringJournal() {
-        String maxSize = System.getProperty("org.gradle.sample.journal.string.maxSize", "100");
-        this.evictingQueue = EvictingQueue.create(Integer.valueOf(maxSize));
+     public StringJournal() {
+         this(Integer.parseInt(System.getProperty("org.sk.sample.journal.string.maxSize", "100")));
+     }
+     public StringJournal(int maxSize) {
+        this.evictingQueue = EvictingQueue.create(maxSize);
     }
 
-    public static StringJournal getInstance() {
-        return INSTANCE;
-    }
 
     @Override
     public boolean add(String item) {

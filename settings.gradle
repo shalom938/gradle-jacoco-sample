@@ -1,9 +1,19 @@
-rootProject.name = 'gradle-jacoco-sample'
+rootProject.name = 'java-modules-gradle-sample'
+
+includeBuild('journals') {
+    dependencySubstitution {
+        substitute module('org.sk.sample.journal:journals-all') using project(':journals-all')
+        substitute module('org.sk.sample.journal:journal') using project(':journal')
+    }
+}
+
+
 include 'utilities'
 include 'cmd-message-provider'
 include 'env-message-provider'
 include 'message-journal'
 include 'messenger'
+include 'messaging'
 include 'application'
 
 

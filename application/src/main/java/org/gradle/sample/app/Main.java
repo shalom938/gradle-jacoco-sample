@@ -8,7 +8,7 @@ import java.io.IOException;
 public class Main {
 
     public static final String ADDR = "localhost";
-    public static final int PORT = 8001;
+    public static final int PORT = Integer.parseInt(System.getProperty("org.gradle.sample.app.port","8001"));
 
     public static void main(String[] args) throws IOException {
 

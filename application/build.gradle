@@ -14,9 +14,7 @@ plugins {
 // reflection to the message-journal module
 
 dependencies {
-    implementation project(':messenger')
-    implementation project(':cmd-message-provider')
-    implementation project(':env-message-provider')
+    implementation project(':messaging')
     implementation project(':utilities')
     implementation libs.commons.text
 
@@ -29,6 +27,9 @@ application {
 
 
 test {
+    onlyIf{
+        project.hasProperty("aaaaaaaaaa")
+    }
     testLogging {
         showStandardStreams project.hasProperty("show.unit.tests.stdout")
         events "passed", "skipped", "failed"

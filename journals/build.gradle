@@ -1,0 +1,28 @@
+allprojects {
+    version = '1.0'
+    group = 'org.sk.sample.journal'
+
+    repositories {
+        mavenCentral()
+    }
+}
+
+
+subprojects {
+
+    apply plugin: 'java-library'
+
+
+    repositories {
+        mavenCentral()
+    }
+
+    testing {
+        suites {
+            test {
+                useJUnitJupiter('5.8.2')
+            }
+        }
+    }
+
+}

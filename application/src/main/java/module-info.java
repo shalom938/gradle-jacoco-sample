@@ -1,6 +1,6 @@
-module org.gradle.sample.app {
+module sample.app {
     requires jdk.httpserver;
     requires java.net.http;
-    requires org.gradle.sample.messenger;
+    requires sample.messaging;
     requires org.apache.commons.text;
 }

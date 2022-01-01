@@ -1,7 +1,9 @@
 package org.gradle.sample.journal;
 
-import org.gradle.sample.journal.impl.StringJournal;
 import org.gradle.sample.utilities.MessageFormatter;
+import org.sk.sample.journal.Journal;
+import org.sk.sample.journals.Journals;
+import org.sk.sample.journals.exception.JournalInitException;
 
 import java.util.List;
 
@@ -9,34 +11,44 @@ public interface MessagesJournal extends Journal<String> {
 
     static MessagesJournal create() {
         return new MessagesJournal() {
+
+            private final Journal<String> stringJournal;
+            {
+                try {
+                    stringJournal = Journals.stringJournal();
+                } catch (JournalInitException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+
             @Override
             public boolean add(String item) {
-                return StringJournal.getInstance().add(item);
+                return stringJournal.add(item);
             }
 
             @Override
             public boolean remove(String item) {
-                return StringJournal.getInstance().remove(item);
+                return stringJournal.remove(item);
             }
 
             @Override
             public int size() {
-                return StringJournal.getInstance().size();
+                return stringJournal.size();
             }
 
             @Override
             public List<String> list() {
-                return StringJournal.getInstance().list();
+                return stringJournal.list();
             }
 
             @Override
             public void clear() {
-                StringJournal.getInstance().clear();
+                stringJournal.clear();
             }
 
             @Override
             public boolean contains(String obj) {
-                return StringJournal.getInstance().contains(obj);
+                return stringJournal.contains(obj);
             }
         };
     }

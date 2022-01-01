@@ -1,4 +1,4 @@
-package org.gradle.sample.journal;
+package org.sk.sample.journal;
 
 import java.util.List;
 
@@ -15,6 +15,7 @@ public interface Journal<T> {
     void clear();
 
     boolean contains(T obj);
+
 
 
 }
