@@ -1,13 +1,15 @@
+
+
 //journal-all is a container project for journal and impls, users can depend on journal-all to
 //get the whole package of just depend on journal to get the interfaces.
 
 
 dependencies {
-    //api configuration exposes the dependency transitively to consumers of this module so they can
-    //directly use classes in journal at compile time. implementation hides the dependency for compile time form
-    //uses of this module.
+    //the api configuration is available to consumers of this module at compile time.
+    //implementation hides the dependency for compile time and is only available at runtime.
     //in module-info.java we also had to declare the journal transitive 'requires transitive sample.journal' for
     //the same reason.
+    //the java library plugin api configuration is very much like 'requires transitive' of the JPMS (java platform module system).
     api project(':journal')
     implementation project(':journal-impls')
     implementation libs.commons.lang3

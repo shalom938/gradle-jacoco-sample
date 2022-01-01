@@ -17,6 +17,19 @@ allprojects {
     repositories {
         mavenCentral()
     }
+
+
+
+    //some modules throw a compiler warning related to module system,
+    //for example: in module sample.messages.journal we do
+    // 'exports org.sk.sample.messagejournal to sample.messenger;'
+    // but sample.messenger is not on the compile path of sample.messages.journal so the
+    // compiler emits a warning. we can exclude those warning with '-Xlint:-module' but that will
+    //remove all warning about the module system
+//    tasks.withType(JavaCompile) {
+//        options.compilerArgs += ['-Xlint:-module']
+//    }
+
 }
 
 subprojects {

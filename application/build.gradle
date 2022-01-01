@@ -6,9 +6,6 @@ plugins {
 
 //TODO:
 // integration tests
-// create a container module, one that only requires all the providers,plus has gradle dependencies on them,
-// then from here only add one dependency. and in module-info require the providers container.
-// if its a java module maybe it will produce an empty jar.
 // add exports .. to in module-info where necessary to really hide packages
 // change StringJournal to its own module and use reflection, keep the constructor provate and open
 // reflection to the message-journal module
