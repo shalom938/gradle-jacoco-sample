@@ -14,4 +14,4 @@
 --add-modules
     java.management
 --add-reads
-    org.gradle.sample.messenger=java.management
+    sample.messenger=java.management
