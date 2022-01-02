@@ -22,9 +22,6 @@ application {
 
 
 test {
-    onlyIf {
-        project.hasProperty("aaaaaaaaaa")
-    }
     testLogging {
         showStandardStreams project.hasProperty("show.unit.tests.stdout")
         events "passed", "skipped", "failed"
