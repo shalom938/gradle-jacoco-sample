@@ -1,6 +1,8 @@
 plugins {
     id 'java-library'
     //using versions catalogs, same as: id 'org.javamodularity.moduleplugin'
+    //todo: check why testMessage don't work without this plugin, its not in the module path, the plugin adds them
+    // to the module path for tests. we also need the plugin for the module-info.test
     alias(pluginslibs.plugins.moduleplugin)
 }
 

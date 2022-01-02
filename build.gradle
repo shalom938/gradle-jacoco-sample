@@ -4,6 +4,8 @@
 // toolchain
 // try with resources example
 // add logging
+// the task buildNeeded does not work for the messenger project, it fails on circular dependency, it lloks like
+// a bug in gradle that wasn't solved completely: https://github.com/gradle/gradle/issues/1647
 
 
 allprojects {
