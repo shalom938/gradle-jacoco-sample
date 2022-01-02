@@ -12,7 +12,12 @@ dependencies {
     testImplementation testinglibs.junit.jupiter
 }
 
-
+compileJava{
+    //because this module has a qualified export 'exports org.sk.sample.messagejournal to sample.messenger'
+    //and sample.messenger is not available during compile of this module the compiler emits a warning.
+    //this will also disable other warnings related to modules.
+    options.compilerArgs += ['-Xlint:-module']
+}
 
 
 test {
