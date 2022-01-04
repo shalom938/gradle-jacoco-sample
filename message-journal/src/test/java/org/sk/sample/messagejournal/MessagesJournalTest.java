@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class MessagesJournalTest {
+class MessagesJournalTest {
 
     private static Integer JOURNAL_SIZE = 5;
 

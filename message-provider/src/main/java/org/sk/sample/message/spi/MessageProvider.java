@@ -1,4 +1,4 @@
-package org.sk.sample.messenger.spi;
+package org.sk.sample.message.spi;
 
 import org.apache.commons.lang3.StringUtils;
 

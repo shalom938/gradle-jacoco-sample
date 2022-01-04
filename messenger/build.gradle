@@ -9,8 +9,8 @@ plugins {
 
 dependencies {
 
+    implementation project(':message-provider')
     implementation project(':message-journal')
-    implementation libs.commons.lang3
 
     testImplementation testinglibs.junit.jupiter
     testRuntimeOnly project(':cmd-message-provider')

@@ -9,6 +9,7 @@ includeBuild('journals') {
 
 
 include 'utilities'
+include 'message-provider'
 include 'cmd-message-provider'
 include 'env-message-provider'
 include 'message-journal'

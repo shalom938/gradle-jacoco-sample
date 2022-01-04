@@ -1,6 +1,6 @@
 package org.sk.sample.env;
 
-import org.sk.sample.messenger.spi.MessageProvider;
+import org.sk.sample.message.spi.MessageProvider;
 
 import java.util.Optional;
 

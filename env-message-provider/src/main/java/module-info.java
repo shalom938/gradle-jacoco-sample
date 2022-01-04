@@ -1,7 +1,7 @@
 import org.sk.sample.env.EnvMessageProvider;
-import org.sk.sample.messenger.spi.MessageProvider;
+import org.sk.sample.message.spi.MessageProvider;
 
 module sample.envMessageProvider {
-    requires sample.messenger;
+    requires transitive sample.message.provider;
     provides MessageProvider with EnvMessageProvider;
 }

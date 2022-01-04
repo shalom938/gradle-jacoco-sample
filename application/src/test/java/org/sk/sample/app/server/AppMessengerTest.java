@@ -1,22 +1,20 @@
-package org.sk.sample.messenger;
+package org.sk.sample.app.server;
 
 import org.junit.jupiter.api.Test;
+import org.sk.sample.messenger.Messenger;
 
-import java.lang.management.ManagementFactory;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class MessengerTest {
+
+//test that messenger works in this module
+
+class AppMessengerTest {
 
 
     @Test
     void testMessage() {
-
-        //just for exploring the java command line and for demonstrating how to add a java module
-        //only for tests, in this case java.management
-        System.out.println("command line arguments in unit test MessengerTest:");
-        ManagementFactory.getRuntimeMXBean().getInputArguments().forEach(s -> System.out.println("arg: " + s));
 
         Messenger messenger = new Messenger();
         Map<String, String> msgs = messenger.getAllMessages();

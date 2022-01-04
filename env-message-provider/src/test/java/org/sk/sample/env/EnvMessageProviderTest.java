@@ -6,7 +6,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class EnvMessageProviderTest {
+class EnvMessageProviderTest {
 
     @Test
     void testCmdProvider() {

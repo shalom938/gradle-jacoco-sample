@@ -3,15 +3,9 @@ plugins {
 }
 
 dependencies {
+    api project(':message-provider')
 
-    //could use 'implementation' but messenger is only necessary for compile and test
-    //implementation project(':messenger')
-
-    compileOnly project(':messenger')
-
-    testImplementation project(':messenger')
     testImplementation testinglibs.junit.jupiter
-
 }
 
 test {
