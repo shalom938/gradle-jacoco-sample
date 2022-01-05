@@ -1,22 +1,20 @@
-package org.sk.sample.messenger;
+package org.sk.sample.messenger.it;
 
+import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Test;
+import org.sk.sample.messenger.Messenger;
+import org.sk.sample.test.Printer;
 
-import java.lang.management.ManagementFactory;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class MessengerTest {
 
-
     @Test
     void testMessage() {
 
-        //just for exploring the java command line and for demonstrating how to add a java module
-        //only for tests, in this case java.management
-        System.out.println("command line arguments in unit test MessengerTest:");
-        ManagementFactory.getRuntimeMXBean().getInputArguments().forEach(s -> System.out.println("arg: " + s));
+        Printer.printEnv(getClass().getSimpleName());
 
         Messenger messenger = new Messenger();
         Map<String, String> msgs = messenger.getAllMessages();
@@ -27,7 +25,8 @@ class MessengerTest {
         msgs.forEach((k, v) -> {
             assertNotNull(k, "message provider name is null");
             assertNotNull(k, "message provider message is null");
-            System.out.println("got message from ".concat(k).concat(", message: ").concat(v));
+            System.out.println("***************************************************");
+            System.out.println(StringUtils.capitalize("Got message from ".concat(k).concat(", message: ").concat(v)));
         });
 
     }

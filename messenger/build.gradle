@@ -1,32 +1,86 @@
+//file:noinspection GroovyAssignabilityCheck
 plugins {
     id 'java-library'
-    //using versions catalogs, same as: id 'org.javamodularity.moduleplugin'
-    //todo: check why testMessage don't work without this plugin, its not in the module path, the plugin adds them
-    // to the module path for tests. we also need the plugin for the module-info.test
-    alias(pluginslibs.plugins.moduleplugin)
+    id 'jvm-test-suite'
 }
 
 
 dependencies {
-
     implementation project(':message-provider')
     implementation project(':message-journal')
-
-    testImplementation testinglibs.junit.jupiter
-    testRuntimeOnly project(':cmd-message-provider')
-    testRuntimeOnly project(':env-message-provider')
-}
-
-compileJava{
-    //because this module has a qualified export 'exports org.sk.sample.messenger to sample.app'
-    //and sample.app is not available during compile of this module the compiler emits a warning.
-    //this will also disable other warnings related to modules.
-    options.compilerArgs += ['-Xlint:-module']
 }
 
 
+/*
+Testing:
+see: https://docs.gradle.org/current/userguide/java_testing.html#sec:java_testing_modular
 
-test {
+the default 'test' task is whitebox testing. it has no module boundaries, gradle will
+execute it with classpath and it has full access to the main source set classes.
+
+the integrationTest is blackbox testing because it needs to test the service providers and thus must run
+in the module system, it is a module by itself with a module-info.java. it requires the main module and
+the testing modules. gradle will execute it with --module-path.
+
+the third option of patching the module with the test classes is more verbose and error pron
+and its not clear why its necessary. but it can be done easily, there are example of how to do it:
+https://discuss.gradle.org/t/correct-gradle-eclipse-juni5-java9-configuration/27405
+the gradle module plugin does it too: https://github.com/java9-modularity/gradle-modules-plugin/tree/v1.8.10.
+
+the unit can tests print the providers messages to the console with -Pshow.unit.tests.stdout, which are the
+command line that started the process and the environment and system properties, its nice to explore the
+command line and see how gradle executes the unit tests.
+*/
+
+testing {
+    suites {
+        test {
+            useJUnitJupiter(testinglibs.versions.junit.jupiter.get())
+            dependencies{
+                implementation libs.commons.lang3
+                implementation project(':test-utils')
+            }
+        }
+
+        integrationTest(JvmTestSuite) {
+            useJUnitJupiter(testinglibs.versions.junit.jupiter.get())
+            dependencies {
+                implementation project
+                implementation libs.commons.lang3
+                implementation project(':test-utils')
+                //the project's dependency for message-provider is implementation which does not
+                // expose it to this test suite because this test suite is a module. blackbox testing.
+                // so we need to add it explicitly.
+                implementation project(':message-provider')
+                runtimeOnly project(':cmd-message-provider')
+                runtimeOnly project(':env-message-provider')
+            }
+            sources {
+                java {
+                    srcDir 'src/integrationTest/java'
+                }
+                resources {
+                    srcDir 'src/integrationTest/resources'
+                }
+            }
+
+            targets {
+                all {
+                    testTask.configure {
+                        shouldRunAfter(test)
+                    }
+                }
+            }
+        }
+    }
+}
+
+tasks.named('check') {
+    dependsOn(testing.suites.integrationTest)
+}
+
+
+tasks.withType(Test).configureEach() {
     testLogging {
         showStandardStreams project.hasProperty("show.unit.tests.stdout")
         events "passed", "skipped", "failed"
@@ -35,3 +89,13 @@ test {
         showCauses true
     }
 }
+
+
+//test{
+//    debugOptions {
+//        enabled = true
+//        port = 5005
+//        server = true
+//        suspend = true
+//    }
+//}

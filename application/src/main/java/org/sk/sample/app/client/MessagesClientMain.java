@@ -15,8 +15,8 @@ public class MessagesClientMain {
 
             var response = client.sendGet("msgs");
 
-            System.out.println("status : " + response.getStatusCode());
-            System.out.println("body : " + response.getBody());
+            System.out.println("Status Code : " + response.getStatusCode());
+            System.out.println("Body : " + response.getBody());
 
         } catch (InterruptedException | URISyntaxException | IOException e) {
             e.printStackTrace();

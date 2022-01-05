@@ -1,6 +1,7 @@
 package org.sk.sample.utilities;
 
 import org.junit.jupiter.api.Test;
+import org.sk.sample.test.Printer;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -9,6 +10,8 @@ public class HttpUtilsTest {
 
     @Test
     public void testGetQueryParamMap() {
+
+        Printer.printEnv(getClass().getSimpleName());
 
         String query = "p1=param1&p2=param2&p3";
 

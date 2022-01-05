@@ -10,8 +10,15 @@ jar {
 }
 
 
-dependencies {
-    testImplementation testinglibs.junit.jupiter
+testing {
+    suites {
+        test {
+            useJUnitJupiter(testinglibs.versions.junit.jupiter.get())
+            dependencies {
+                implementation project(':test-utils')
+            }
+        }
+    }
 }
 
 

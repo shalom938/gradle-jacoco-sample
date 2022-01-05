@@ -7,7 +7,7 @@ includeBuild('journals') {
     }
 }
 
-
+include 'test-utils'
 include 'utilities'
 include 'message-provider'
 include 'cmd-message-provider'
@@ -29,7 +29,9 @@ dependencyResolutionManagement {
             alias('commons-text').to('org.apache.commons:commons-text:1.9')
         }
         testinglibs {
-            alias('junit-jupiter').to('org.junit.jupiter:junit-jupiter:5.8.2')
+            version('junit-jupiter', '5.7.2')
+            //TODO: with junit 5.8.2 it fails, see: https://github.com/junit-team/junit5/issues/2730
+            alias('junit-jupiter').to('org.junit.jupiter:junit-jupiter:5.7.2')
 //            alias('commons-lang3').to('org.apache.commons', 'commons-lang3').version {
 //                strictly '[3.8, 4.0['
 //                prefer '3.9'
@@ -41,3 +43,4 @@ dependencyResolutionManagement {
 
     }
 }
+

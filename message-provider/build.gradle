@@ -6,3 +6,12 @@ plugins {
 dependencies {
    implementation libs.commons.lang3
 }
+
+
+testing {
+    suites {
+        test {
+            useJUnitJupiter(testinglibs.versions.junit.jupiter.get())
+        }
+    }
+}

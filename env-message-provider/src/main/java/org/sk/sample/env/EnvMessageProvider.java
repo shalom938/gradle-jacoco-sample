@@ -8,13 +8,13 @@ public class EnvMessageProvider implements MessageProvider {
 
     @Override
     public Optional<String> nextMessage() {
-
         StringBuilder msgBuilder = new StringBuilder();
-        msgBuilder.append("ENV:").append(System.lineSeparator());
-        System.getenv().forEach((k, v) -> msgBuilder.append(k).append("=").append(v).append(",").append(System.lineSeparator()));
-        msgBuilder.append("PROPERTIES:").append(System.lineSeparator());
-        System.getProperties().forEach((k, v) -> msgBuilder.append(k).append("=").append(v).append(",").append(System.lineSeparator()));
-
+        msgBuilder.append("ENV: ");
+        System.getenv().forEach((k, v) -> msgBuilder.append(k).append("=").append(v).append(","));
+        msgBuilder.append(System.lineSeparator());
+        msgBuilder.append("PROPERTIES:");
+        System.getProperties().forEach((k, v) -> msgBuilder.append(k).append("=").append(v).append(","));
+        msgBuilder.append(System.lineSeparator());
         return Optional.of(msgBuilder.toString());
     }
 }

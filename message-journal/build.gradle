@@ -3,13 +3,10 @@ plugins {
 }
 
 dependencies {
-
     implementation project(':utilities')
     //journals-all is from an included build
     api 'org.sk.sample.journal:journals-all:1.0'
     implementation libs.google.guava
-
-    testImplementation testinglibs.junit.jupiter
 }
 
 compileJava{
@@ -17,6 +14,15 @@ compileJava{
     //and sample.messenger is not available during compile of this module the compiler emits a warning.
     //this will also disable other warnings related to modules.
     options.compilerArgs += ['-Xlint:-module']
+}
+
+
+testing {
+    suites {
+        test {
+            useJUnitJupiter(testinglibs.versions.junit.jupiter.get())
+        }
+    }
 }
 
 

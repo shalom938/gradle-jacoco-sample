@@ -1,6 +1,7 @@
+//file:noinspection GroovyAssignabilityCheck
 plugins {
     id 'application'
-    //todo: check why ProvidersExistenceTest don't work without moduleplugin
+    id 'jvm-test-suite'
     alias(pluginslibs.plugins.moduleplugin)
 }
 
@@ -13,8 +14,6 @@ dependencies {
     implementation project(':messaging')
     implementation project(':utilities')
     implementation libs.commons.text
-
-    testImplementation testinglibs.junit.jupiter
 }
 
 application {
@@ -23,6 +22,33 @@ application {
 }
 
 
+/*
+Testing:
+This module shows how to do whitebox testing with module boundaries using org.javamodularity.moduleplugin.
+the test AppMessengerTest loads a service provider and therefore needs to run in the module system.
+moduleplugin does all the necessary patching.
+module cmd-message-provider shows how to do that without the plugin.
+module messenger has separate test suites for whitebox and blackbox testing which is my preferred solution.
+
+This module also adds integration tests..
+TODO:
+
+ */
+
+
+
+testing {
+    suites {
+        test {
+            useJUnitJupiter(testinglibs.versions.junit.jupiter.get())
+            dependencies{
+                implementation libs.commons.lang3
+                implementation project(':test-utils')
+            }
+        }
+    }
+}
+
 test {
     testLogging {
         showStandardStreams project.hasProperty("show.unit.tests.stdout")
@@ -30,5 +56,9 @@ test {
         showStackTraces true
         exceptionFormat 'full'
         showCauses true
+    }
+
+    doLast{
+        println "jvm args: " +jvmArgs
     }
 }

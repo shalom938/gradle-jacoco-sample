@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.sk.sample.app.Main.ADDR;
 import static org.sk.sample.app.Main.PORT;
 
-public class ServerTest {
+class ServerTest {
 
 
     @BeforeAll
@@ -30,7 +30,7 @@ public class ServerTest {
 
 
     @Test
-    public void testMessages() throws URISyntaxException, IOException, InterruptedException {
+    void testMessages() throws URISyntaxException, IOException, InterruptedException {
         Client client = new Client(ADDR, PORT);
         Client.Response response = client.sendGet("msgs");
         assertNotNull(response, "client returned null response");
