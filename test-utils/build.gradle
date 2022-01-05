@@ -1,0 +1,19 @@
+/*
+a test util module with utilities to be used in unit tests in other projects.
+gradle test fixtures didn't work well with the JvmTestSuites.
+*/
+plugins {
+    id 'java-library'
+}
+
+dependencies {
+    implementation libs.commons.lang3
+}
+
+//
+////needs to be automatic module because we use it in black box testing
+//jar {
+//    manifest {
+//        attributes('Automatic-Module-Name': 'sample.testutils')
+//    }
+//}
