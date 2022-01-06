@@ -1,33 +1,18 @@
 plugins {
-    id 'java-library'
+    id 'sample.java-library-conventions'
 }
 
-//demonstrates hot to use this module as automatic module
+//todo: intellij has errors when referencing 'utilities' or classes from this module.
+//probably because its an automatic module from the local project. it only shows red marks but everything
+//compiles and works.
+// https://youtrack.jetbrains.com/issue/IDEA-183692
+
+
+
+//demonstrates hot to use this module as automatic module.
 jar {
     manifest {
         attributes('Automatic-Module-Name': project.name)
     }
 }
 
-
-testing {
-    suites {
-        test {
-            useJUnitJupiter(testinglibs.versions.junit.jupiter.get())
-            dependencies {
-                implementation project(':test-utils')
-            }
-        }
-    }
-}
-
-
-test {
-    testLogging {
-        showStandardStreams project.hasProperty("show.unit.tests.stdout")
-        events "passed", "skipped", "failed"
-        showStackTraces true
-        exceptionFormat 'full'
-        showCauses true
-    }
-}

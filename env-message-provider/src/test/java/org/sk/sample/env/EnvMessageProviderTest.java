@@ -15,12 +15,9 @@ class EnvMessageProviderTest {
 
 
     @BeforeAll
-    public static void addUses(){
+    public static void addUses() {
         EnvMessageProviderTest.class.getModule().addUses(MessageProvider.class);
     }
-
-
-
 
 
     @Test
@@ -33,10 +30,9 @@ class EnvMessageProviderTest {
     }
 
 
-
     //this test should run inside the module system
     @Test
-    void testAsService(){
+    void testAsService() {
         ServiceLoader<MessageProvider> serviceLoader = ServiceLoader.load(MessageProvider.class);
         assertEquals(1, serviceLoader.stream().count(), "EnvMessageProvider service should be found");
         EnvMessageProvider envMessageProvider = (EnvMessageProvider) serviceLoader.findFirst().get();

@@ -67,9 +67,6 @@ public interface MessagesJournal extends Journal<String> {
 
 
     private String messagePreview(String msg) {
-        //todo: intellij doesn't see utilities as automatic modules.
-        // builds fine with gradle and also builds fine with intellij but the editor shows errors
-        // https://youtrack.jetbrains.com/issue/IDEA-183692
         return MessageFormatter.messagePreview(msg);
     }
 

@@ -6,20 +6,20 @@ import org.sk.sample.journals.exception.JournalInitException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class JournalAllTest {
+class JournalAllTest {
 
 
     //test we got all in the classpath/module path correctly
 
     @Test
-    public void testJournalCreate() throws JournalInitException {
+    void testJournalCreate() throws JournalInitException {
         Journal<String> stringJournal = Journals.stringJournal();
         assertNotNull(stringJournal, "string journal is null");
         assertTrue(stringJournal.size() == 0, "string journal should be empty");
     }
 
     @Test
-    public void testJournalMaxSize() throws JournalInitException {
+    void testJournalMaxSize() throws JournalInitException {
         Journal<String> stringJournal = Journals.stringJournal(5);
         assertNotNull(stringJournal, "string journal is null");
         assertTrue(stringJournal.size() == 0, "string journal should be empty");

@@ -1,6 +1,6 @@
 //
 // Patch, i.e. configure, Java module system at test-runtime
-//
+// processed by org.javamodularity.moduleplugin
 //demonstrate how to use a module only in unit tests,e.g:java.management
 
 --add-modules

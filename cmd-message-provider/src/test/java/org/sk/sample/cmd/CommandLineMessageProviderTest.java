@@ -15,10 +15,9 @@ class CommandLineMessageProviderTest {
 
 
     @BeforeAll
-    public static void addUses(){
+    public static void addUses() {
         CommandLineMessageProvider.class.getModule().addUses(MessageProvider.class);
     }
-
 
 
     @Test
@@ -33,7 +32,7 @@ class CommandLineMessageProviderTest {
 
     //this test should run inside the module system
     @Test
-    void testAsService(){
+    void testAsService() {
         ServiceLoader<MessageProvider> serviceLoader = ServiceLoader.load(MessageProvider.class);
         assertEquals(1, serviceLoader.stream().count(), "CommandLineMessageProvider service should be found");
         CommandLineMessageProvider commandLineMessageProvider = (CommandLineMessageProvider) serviceLoader.findFirst().get();

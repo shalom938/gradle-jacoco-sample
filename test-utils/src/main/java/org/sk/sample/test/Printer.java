@@ -9,9 +9,9 @@ public class Printer {
 
     public static void printEnv(String fromClass) {
 
-        System.out.println("Command line arguments in "+fromClass+": "+
-                StringUtils.join(ManagementFactory.getRuntimeMXBean().getInputArguments(),','));
-        System.out.println("Command line in "+fromClass+": "+ProcessHandle.current().info().commandLine());
+        System.out.println("Command line arguments in " + fromClass + ": " +
+                StringUtils.join(ManagementFactory.getRuntimeMXBean().getInputArguments(), ','));
+        System.out.println("Command line in " + fromClass + ": " + ProcessHandle.current().info().commandLine());
 
     }
 }

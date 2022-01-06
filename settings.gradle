@@ -23,7 +23,7 @@ enableFeaturePreview('VERSION_CATALOGS')
 dependencyResolutionManagement {
     versionCatalogs {
         libs {
-            //version('groovy', '3.0.5')
+            version('java-version', '11')
             alias('google-guava').to('com.google.guava:guava:31.0.1-jre')
             alias('commons-lang3').to('org.apache.commons:commons-lang3:3.12.0')
             alias('commons-text').to('org.apache.commons:commons-text:1.9')
@@ -40,7 +40,6 @@ dependencyResolutionManagement {
         pluginslibs {
             alias('moduleplugin').toPluginId('org.javamodularity.moduleplugin').version('1.8.10')
         }
-
     }
 }
 

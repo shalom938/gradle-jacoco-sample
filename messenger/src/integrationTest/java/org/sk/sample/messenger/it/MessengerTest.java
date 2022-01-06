@@ -18,7 +18,7 @@ class MessengerTest {
 
         Messenger messenger = new Messenger();
         Map<String, String> msgs = messenger.getAllMessages();
-        assertEquals(2,msgs.size(),"expecting 2 messages");
+        assertEquals(2, msgs.size(), "expecting 2 messages");
         assertNotNull(msgs, "messenger returned null");
         assertFalse(msgs.isEmpty(), "messenger returned empty map");
 

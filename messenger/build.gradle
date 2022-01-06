@@ -1,9 +1,7 @@
 //file:noinspection GroovyAssignabilityCheck
 plugins {
-    id 'java-library'
-    id 'jvm-test-suite'
+    id 'sample.java-library-conventions-with-it'
 }
-
 
 dependencies {
     implementation project(':message-provider')
@@ -32,22 +30,21 @@ command line that started the process and the environment and system properties,
 command line and see how gradle executes the unit tests.
 */
 
+
+//sample.java-library-conventions-with-it adds basic configuration for a test task called
+//integrationTest which can be furthered configured here.
+
 testing {
     suites {
         test {
-            useJUnitJupiter(testinglibs.versions.junit.jupiter.get())
-            dependencies{
+            dependencies {
                 implementation libs.commons.lang3
-                implementation project(':test-utils')
             }
         }
 
-        integrationTest(JvmTestSuite) {
-            useJUnitJupiter(testinglibs.versions.junit.jupiter.get())
+        integrationTest {
             dependencies {
-                implementation project
                 implementation libs.commons.lang3
-                implementation project(':test-utils')
                 //the project's dependency for message-provider is implementation which does not
                 // expose it to this test suite because this test suite is a module. blackbox testing.
                 // so we need to add it explicitly.
@@ -55,47 +52,7 @@ testing {
                 runtimeOnly project(':cmd-message-provider')
                 runtimeOnly project(':env-message-provider')
             }
-            sources {
-                java {
-                    srcDir 'src/integrationTest/java'
-                }
-                resources {
-                    srcDir 'src/integrationTest/resources'
-                }
-            }
-
-            targets {
-                all {
-                    testTask.configure {
-                        shouldRunAfter(test)
-                    }
-                }
-            }
         }
     }
 }
 
-tasks.named('check') {
-    dependsOn(testing.suites.integrationTest)
-}
-
-
-tasks.withType(Test).configureEach() {
-    testLogging {
-        showStandardStreams project.hasProperty("show.unit.tests.stdout")
-        events "passed", "skipped", "failed"
-        showStackTraces true
-        exceptionFormat 'full'
-        showCauses true
-    }
-}
-
-
-//test{
-//    debugOptions {
-//        enabled = true
-//        port = 5005
-//        server = true
-//        suspend = true
-//    }
-//}

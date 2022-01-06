@@ -1,7 +1,6 @@
 //file:noinspection GroovyAssignabilityCheck
 plugins {
-    id 'application'
-    id 'jvm-test-suite'
+    id 'sample.java-application-conventions'
     alias(pluginslibs.plugins.moduleplugin)
 }
 
@@ -40,25 +39,9 @@ TODO:
 testing {
     suites {
         test {
-            useJUnitJupiter(testinglibs.versions.junit.jupiter.get())
-            dependencies{
+            dependencies {
                 implementation libs.commons.lang3
-                implementation project(':test-utils')
             }
         }
-    }
-}
-
-test {
-    testLogging {
-        showStandardStreams project.hasProperty("show.unit.tests.stdout")
-        events "passed", "skipped", "failed"
-        showStackTraces true
-        exceptionFormat 'full'
-        showCauses true
-    }
-
-    doLast{
-        println "jvm args: " +jvmArgs
     }
 }

@@ -6,7 +6,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class StringJournalTest {
+class StringJournalTest {
 
     private static Integer JOURNAL_SIZE = 5;
 

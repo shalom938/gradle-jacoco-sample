@@ -9,11 +9,3 @@ plugins {
 dependencies {
     implementation libs.commons.lang3
 }
-
-//
-////needs to be automatic module because we use it in black box testing
-//jar {
-//    manifest {
-//        attributes('Automatic-Module-Name': 'sample.testutils')
-//    }
-//}

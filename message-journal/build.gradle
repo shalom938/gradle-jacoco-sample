@@ -1,5 +1,5 @@
 plugins {
-    id 'java-library'
+    id 'sample.java-library-conventions'
 }
 
 dependencies {
@@ -9,29 +9,10 @@ dependencies {
     implementation libs.google.guava
 }
 
-compileJava{
-    //because this module has a qualified export 'exports org.sk.sample.messagejournal to sample.messenger'
-    //and sample.messenger is not available during compile of this module the compiler emits a warning.
+compileJava {
+    //There's a compiler warning because this module has a qualified export
+    //'exports org.sk.sample.messagejournal to sample.messenger' and sample.messenger is not
+    //available during compile of this module.
     //this will also disable other warnings related to modules.
     options.compilerArgs += ['-Xlint:-module']
-}
-
-
-testing {
-    suites {
-        test {
-            useJUnitJupiter(testinglibs.versions.junit.jupiter.get())
-        }
-    }
-}
-
-
-test {
-    testLogging {
-        showStandardStreams project.hasProperty("show.unit.tests.stdout")
-        events "passed", "skipped", "failed"
-        showStackTraces true
-        exceptionFormat 'full'
-        showCauses true
-    }
 }

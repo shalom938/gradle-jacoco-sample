@@ -1,12 +1,11 @@
 package org.sk.sample.messenger;
 
-import org.sk.sample.messagejournal.MessagesJournal;
 import org.sk.sample.message.spi.MessageProvider;
+import org.sk.sample.messagejournal.MessagesJournal;
 import org.sk.sample.messenger.internal.InternalHelper;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Optional;
 import java.util.ServiceLoader;
 
 public class Messenger {

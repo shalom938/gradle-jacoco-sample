@@ -77,9 +77,6 @@ public class Server {
         }
 
 
-        //todo: intellij doesn't see utilities as automatic modules.
-        // builds fine with gradle and also builds fine with intellij but the editor shows errors
-        // https://youtrack.jetbrains.com/issue/IDEA-183692
 
         private void handleResponse(HttpExchange httpExchange, Map<String, String> allMessages) throws IOException {
 

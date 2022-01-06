@@ -1,0 +1,7 @@
+//file:noinspection GroovyAssignabilityCheck
+//file:noinspection GrPackage
+plugins {
+    id 'java-library'
+    id 'sample.java-conventions'
+    id 'sample.java-testing-conventions'
+}
