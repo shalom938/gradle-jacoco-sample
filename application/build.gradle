@@ -1,12 +1,9 @@
 //file:noinspection GroovyAssignabilityCheck
 plugins {
-    id 'sample.java-application-conventions'
+    id 'sample.java-application-conventions-with-it'
     alias(pluginslibs.plugins.moduleplugin)
 }
 
-
-//TODO:
-// integration tests
 
 
 dependencies {
@@ -29,9 +26,9 @@ moduleplugin does all the necessary patching.
 module cmd-message-provider shows how to do that without the plugin.
 module messenger has separate test suites for whitebox and blackbox testing which is my preferred solution.
 
-This module also adds integration tests..
-TODO:
-
+This module also adds integration tests.
+the integration tests start an embedded server and call some endpoints.
+the integrationTest task is bound to the check lifecycle task.
  */
 
 
@@ -41,6 +38,47 @@ testing {
         test {
             dependencies {
                 implementation libs.commons.lang3
+            }
+            targets {
+                all {
+                    testTask.configure {
+                        beforeTest { descriptor ->
+                            logger.lifecycle("Running test: " + descriptor)
+                        }
+                        failFast = true
+                        //because currently can't run more then one instance of the server
+                        maxParallelForks = 1
+                    }
+                }
+            }
+        }
+
+        integrationTest {
+            dependencies {
+                implementation libs.commons.lang3
+                //the project's dependency for message-provider is implementation which does not
+                // expose it to this test suite because this test suite is a module. blackbox testing.
+                // so we need to add it explicitly.
+                implementation project(':message-provider')
+                runtimeOnly project(':cmd-message-provider')
+                runtimeOnly project(':env-message-provider')
+            }
+            targets {
+                all {
+                    testTask.configure {
+                        minHeapSize = "128m"
+                        maxHeapSize = "512m"
+                        beforeTest { descriptor ->
+                            logger.lifecycle("Running test: " + descriptor)
+                        }
+                        failFast = true
+                        //because currently can't run more then one instance of the server
+                        maxParallelForks = 1
+                        //TODO: because we always start the server on the same port we can't execute tests
+                        // or test suites in parallel. so depend on the test task
+                        dependsOn(test)
+                    }
+                }
             }
         }
     }

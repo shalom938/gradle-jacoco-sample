@@ -32,7 +32,8 @@ command line and see how gradle executes the unit tests.
 
 
 //sample.java-library-conventions-with-it adds basic configuration for a test task called
-//integrationTest which can be furthered configured here.
+//integrationTest which can be further configured here.
+//the integrationTest task is bound to the check lifecycle task.
 
 testing {
     suites {
