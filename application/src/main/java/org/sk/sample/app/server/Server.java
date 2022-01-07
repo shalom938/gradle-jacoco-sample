@@ -4,7 +4,7 @@ import com.sun.net.httpserver.HttpContext;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
-import org.sk.sample.app.Main;
+import org.sk.sample.app.Conf;
 import org.sk.sample.messenger.Messenger;
 import org.sk.sample.utilities.HttpUtils;
 import org.sk.sample.utilities.MessageFormatter;
@@ -41,7 +41,7 @@ public class Server {
     });
 
     public Server() throws IOException {
-        this(Main.ADDR, Main.PORT);
+        this(Conf.getAddress(), Conf.getPort());
     }
 
     public Server(String addr, int port) throws IOException {
@@ -160,5 +160,11 @@ public class Server {
         System.out.println("Executor service stopped.");
     }
 
+
+
+    @Override
+    public String toString(){
+        return server.getAddress().toString();
+    }
 
 }

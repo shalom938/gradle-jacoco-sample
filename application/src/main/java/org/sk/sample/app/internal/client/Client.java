@@ -1,16 +1,16 @@
-package org.sk.sample.app.client;
+package org.sk.sample.app.internal.client;
+
+import org.sk.sample.app.Conf;
+import org.sk.sample.utilities.HttpUtils;
 
 import java.io.IOException;
-import java.net.URI;
+import java.net.InetAddress;
 import java.net.URISyntaxException;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
-
-import static org.sk.sample.app.Main.ADDR;
-import static org.sk.sample.app.Main.PORT;
 
 public class Client {
 
@@ -19,7 +19,7 @@ public class Client {
     private final int port;
 
     public Client() {
-        this(ADDR, PORT);
+        this(Conf.getAddress(), Conf.getPort());
     }
 
     public Client(String host, int port) {
@@ -32,7 +32,7 @@ public class Client {
 
 
     public Response sendGet(String path) throws URISyntaxException, IOException, InterruptedException {
-        HttpRequest httpRequest = HttpRequest.newBuilder(new URI("http://" + host + ":" + port + "/" + path))
+        HttpRequest httpRequest = HttpRequest.newBuilder(HttpUtils.buildUrl(InetAddress.getByName(host),port,path))
                 .GET()
                 .timeout(Duration.of(10, ChronoUnit.SECONDS))
                 .build();

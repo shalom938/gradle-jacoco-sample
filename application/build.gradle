@@ -4,6 +4,12 @@ plugins {
     alias(pluginslibs.plugins.moduleplugin)
 }
 
+ext{
+    integrationTestServerHost = 'localhost'
+    integrationTestServerPort = '8009'
+    integrationTestServerHostPropVal = "-Dorg.sk.sample.app.host="+integrationTestServerHost
+    integrationTestServerPortPropVal = "-Dorg.sk.sample.app.port="+integrationTestServerPort
+}
 
 
 dependencies {
@@ -14,7 +20,7 @@ dependencies {
 
 application {
     mainModule = 'sample.app'
-    mainClass = 'org.sk.sample.app.Main'
+    mainClass = 'org.sk.sample.app.AppMain'
 }
 
 
@@ -66,20 +72,95 @@ testing {
             targets {
                 all {
                     testTask.configure {
+                        jvmArgs = [integrationTestServerHostPropVal,integrationTestServerPortPropVal]
                         minHeapSize = "128m"
                         maxHeapSize = "512m"
                         beforeTest { descriptor ->
                             logger.lifecycle("Running test: " + descriptor)
                         }
                         failFast = true
-                        //because currently can't run more then one instance of the server
                         maxParallelForks = 1
-                        //TODO: because we always start the server on the same port we can't execute tests
-                        // or test suites in parallel. so depend on the test task
-                        dependsOn(test)
+                        forkEvery = 1
+                        dependsOn('startServer')
+                        finalizedBy('stopServer')
+                        //strong ordering, startServer is also mustRunAfter(test) otherwise
+                        //there may be a situation that startServer will be called at the same
+                        //time with test
+                        mustRunAfter(test)
                     }
                 }
             }
         }
     }
+}
+
+
+
+
+
+import org.apache.tools.ant.taskdefs.condition.Os
+tasks.register("startServer",DefaultTask.class){
+
+    mustRunAfter(test)
+    dependsOn installDist
+    outputs.upToDateWhen{false}
+
+    doLast{
+
+        println "Starting integration test server.."
+
+        def javaHome = javaToolchains.launcherFor {
+            languageVersion = JavaLanguageVersion.of(11)
+        }.get().getMetadata().getInstallationPath().getAsFile().getAbsolutePath()
+
+
+        def scriptName = Os.isFamily(Os.FAMILY_WINDOWS) ? "application.bat" : "application"
+        def startScript = file(installDist.getDestinationDir().getAbsolutePath()+"/bin/"+scriptName).getAbsolutePath()
+        ProcessBuilder builder = new ProcessBuilder(startScript);
+        builder.directory(installDist.getDestinationDir());
+        builder.environment().put("JAVA_HOME",javaHome)
+        builder.environment().put("JAVA_OPTS",integrationTestServerHostPropVal+" "+integrationTestServerPortPropVal)
+        def logsDir = file(installDist.getDestinationDir().getAbsolutePath()+"/logs")
+        logsDir.mkdirs()
+        def logFile = new File(logsDir,"app.log")
+        builder.redirectOutput(logFile)
+        builder.redirectError(logFile)
+        builder.redirectErrorStream(true)
+
+        Process process = builder.start()
+        sleep(1000)
+
+        logFile.any {line ->
+            println line
+            if (line.contains("Server started")) {
+                println "Integration test server is ready!"
+                return true;
+            }
+        }
+
+        ext.serverProcess = process
+    }
+}
+
+
+tasks.register("stopServer"){
+
+    outputs.upToDateWhen{false}
+
+    onlyIf{
+        //if stopServer is the only task called we don't want to cause configuration
+        //of startServer, calling only tasks.startServer will cause configuration od startServer,
+        //checking if the taskGraph has startServer avoids that.
+        gradle.taskGraph.hasTask(':application:startServer') && tasks.startServer.getState().getExecuted()
+    }
+
+    doFirst {
+        println "Stopping integration test server.."
+        new URL("http://"+integrationTestServerHost+":"+integrationTestServerPort+"/shutdown").text
+        if (tasks.startServer.serverProcess != null) {
+            tasks.startServer.serverProcess.destroy()
+        }
+        println "Integration test server stopped."
+    }
+
 }

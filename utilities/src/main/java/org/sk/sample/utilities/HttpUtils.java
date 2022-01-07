@@ -1,5 +1,8 @@
 package org.sk.sample.utilities;
 
+import java.net.InetAddress;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Collections;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -7,6 +10,8 @@ import java.util.stream.Stream;
 
 public class HttpUtils {
 
+    private static final String HTTP = "http://";
+    private static final char PS = '/';
 
     public static Map<String, String> getQueryParamMap(String query) {
 
@@ -19,4 +24,12 @@ public class HttpUtils {
 
     }
 
+
+    public static URI buildUrl(InetAddress host, int port) throws URISyntaxException {
+        return new URI(HTTP + host.getHostAddress() + ":" + port + PS);
+    }
+
+    public static URI buildUrl(InetAddress host, int port, String path) throws URISyntaxException {
+        return new URI(HTTP + host.getHostAddress() + ":" + port + PS + path);
+    }
 }

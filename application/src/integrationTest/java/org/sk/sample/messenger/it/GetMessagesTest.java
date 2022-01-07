@@ -1,9 +1,9 @@
 package org.sk.sample.messenger.it;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
+
+import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Test;
-import org.sk.sample.app.Main;
-import org.sk.sample.app.client.Client;
+import org.sk.sample.app.Conf;
+import org.sk.sample.app.internal.client.Client;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -12,29 +12,10 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class GetMessagesTest {
 
-    //currently, can't run tests in parallel because they will try the same port.
-    //TODO: how to run tests in parallel? maybe a server on different port for every test
-    //instance. or only one server that will start before the test suite
-
-    @BeforeAll
-    public static void startServer() throws IOException {
-        Main.main(null);
-    }
-
-
-    @AfterAll
-    public static void stopServer() throws URISyntaxException, IOException, InterruptedException {
-        Client client = new Client(Main.ADDR, Main.PORT);
-        //hopefully will shut down the server
-        client.sendGet("shutdown");
-    }
-
-
-
     @Test
     void testGetMessage() throws URISyntaxException, IOException, InterruptedException {
 
-        Client client = new Client(Main.ADDR, Main.PORT);
+        Client client = new Client(Conf.getAddress(), Conf.getPort());
 
         var response = client.sendGet("msgs");
 
@@ -43,6 +24,15 @@ class GetMessagesTest {
         assertFalse(response.getBody().isBlank(),"body is blank");
         System.out.println("Status Code in GetMessagesTest : " + response.getStatusCode());
         System.out.println("Body in GetMessagesTest : " + response.getBody());
+
+
+        //just a simple way to test that the server found providers and got two messages.
+        //of course in real world the response should be more defined.
+        int countHStart = StringUtils.countMatches(response.getBody(),"<h1>");
+        int countHEnd = StringUtils.countMatches(response.getBody(),"</h1>");
+        assertTrue(countHStart > 0,"No messages in body");
+        assertEquals(countHStart ,countHEnd,"Wrong html body");
+        assertEquals(countHStart,4,"wrong number of lines in body");
 
     }
 }

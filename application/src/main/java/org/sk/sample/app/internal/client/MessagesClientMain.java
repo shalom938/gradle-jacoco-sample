@@ -1,6 +1,6 @@
-package org.sk.sample.app.client;
+package org.sk.sample.app.internal.client;
 
-import org.sk.sample.app.Main;
+import org.sk.sample.app.Conf;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -11,7 +11,7 @@ public class MessagesClientMain {
         try {
             System.out.println("building http client");
 
-            Client client = new Client(Main.ADDR, Main.PORT);
+            Client client = new Client(Conf.getAddress(), Conf.getPort());
 
             var response = client.sendGet("msgs");
 

@@ -20,6 +20,11 @@ testing {
             targets {
                 all {
                     testTask.configure {
+                        //flexible ordering, gradle may choose differently or
+                        //run them in parallel. if the test and integration tests can not
+                        //run at the same time then change to mustRunAfter.
+                        //dependsOn is not suitable here because we want to be able to run only
+                        //the integration test without dependency on test.
                         shouldRunAfter(test)
                     }
                 }

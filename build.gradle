@@ -1,8 +1,16 @@
 //TODO:
-// try with resources example
+// clean code
 // add logging
-// NOTE: i changed it but maybe check this bug. the task buildNeeded does not work for the messenger project, it fails on circular dependency, it lloks like
-// a bug in gradle that wasn't solved completely: https://github.com/gradle/gradle/issues/1647
+// package the app
+// add jacoco and sonar, checkstyle
+// try with resources example
+// readme
+// NOTE: i changed it but maybe check this bug. the task buildNeeded does not work for the messenger project, it fails on circular dependency,
+// it looks like a bug in gradle that wasn't solved completely: https://github.com/gradle/gradle/issues/1647
+// maybe make a maven build too???
+
+
+// BIG TODO : remove all todos
 
 allprojects {
     version = '1.0.0'
