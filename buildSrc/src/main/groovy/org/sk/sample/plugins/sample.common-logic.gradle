@@ -1,0 +1,15 @@
+
+ext.sendHttpGet = { host, port, httpPath ->
+    def url = new URL("http://" + host + ":" + port + "/" + httpPath)
+    try {
+        def httpConnection = url.openConnection()
+        httpConnection.requestMethod = 'GET'
+        if (!httpConnection.responseCode.equals(200)) {
+            throw new GradleException("Failed calling $url, response code $httpConnection.responseCode")
+        }
+        url.text
+    }catch(Throwable e){
+        throw new GradleException("Failed calling $url, $e.message",e)
+    }
+}
+
