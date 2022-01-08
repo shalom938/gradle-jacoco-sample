@@ -107,9 +107,13 @@ testing {
 
 
 
-//TODO: if integrationTest task is uptodate the start server will execute,
-// see how not to start the server if integration test is not going to run
-// maybe start the server in a task listener?
+//TODO: if integrationTest task is uptodate the start server will still execute.
+// its not possible to know if the integrationTest task is going to execute.
+// even setting the same inputs to integrationTest and startServer is not the right solution, it may work
+// but still something between startServer and integrationTest may change the input.
+// so in any case when startServer is called its too early to decide if integrationTest will be upToDate
+// or not.
+// and therefore the solution is probably a build service.
 import org.apache.tools.ant.taskdefs.condition.Os
 tasks.register('startServer',DefaultTask.class){
 
@@ -175,7 +179,9 @@ tasks.register('stopServer'){
         //also use of the configuration_avoidance api like tasks.named doesn't help because we call
         //getState() and that causes configuration.
         //checking if the taskGraph has startServer avoids the startServer configuration.
-        gradle.taskGraph.hasTask(':application:startServer') && tasks.startServer.getState().getExecuted()
+        gradle.taskGraph.hasTask(':application:startServer') &&
+                                    tasks.startServer.getState().getExecuted() &&
+                                    tasks.startServer.getState().getFailure() == null
     }
 
     doFirst {
