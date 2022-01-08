@@ -94,7 +94,8 @@ testing {
                         finalizedBy('stopServer')
                         //strong ordering, startServer is also mustRunAfter(test) otherwise
                         //there may be a situation that startServer will be called at the same
-                        //time with test
+                        //time with test.
+                        // todo: after changing the port for integration tests server this may not be necessary anymore
                         mustRunAfter(test)
                     }
                 }
@@ -119,7 +120,7 @@ tasks.register('startServer',DefaultTask.class){
         gradle.taskGraph.hasTask(':application:integrationTest')
     }
 
-    doLast{
+    doFirst{
 
         println "Starting integration test server.."
 
@@ -171,7 +172,9 @@ tasks.register('stopServer'){
     onlyIf{
         //if stopServer is the only task called we don't want to cause configuration
         //of startServer, calling only tasks.startServer will cause configuration od startServer,
-        //checking if the taskGraph has startServer avoids that.
+        //also use of the configuration_avoidance api like tasks.named doesn't help because we call
+        //getState() and that causes configuration.
+        //checking if the taskGraph has startServer avoids the startServer configuration.
         gradle.taskGraph.hasTask(':application:startServer') && tasks.startServer.getState().getExecuted()
     }
 
