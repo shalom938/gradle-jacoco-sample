@@ -46,6 +46,27 @@ the integrationTest task depends on the check lifecycle task so it will run on e
  */
 
 
+/*
+    starting the app before integration tests:
+    in this example the app is started from a build service AppLauncher.
+    Notes:
+    it can only be configured once per build, although its defined in this project it is global for the build.
+    its a kind of singleton, can only start one server.
+    for the purpose of this project its enough and better then start/stop server tasks.
+ */
+
+
+
+project.getGradle().getSharedServices().registerIfAbsent("appLauncher", org.sk.sample.plugin.applauncher.AppLauncher.class, spec -> {
+    spec.getParameters().getPort().set(integrationTestServerPort as Integer);
+    spec.getParameters().getHost().set(integrationTestServerHost);
+    spec.getParameters().getJavaOpts().set(integrationTestServerHostPropVal+" "+integrationTestServerPortPropVal);
+    spec.getParameters().getInstallationDirectory().set(installDist.getDestinationDir());
+    spec.getParameters().getJavaHome().set(javaToolchains.launcherFor {
+                                                                languageVersion = JavaLanguageVersion.of(11)
+                                                                }.get().getMetadata().getInstallationPath());
+});
+
 
 testing {
     suites {
@@ -56,9 +77,11 @@ testing {
             targets {
                 all {
                     testTask.configure {
+
                         beforeTest { descriptor ->
                             logger.lifecycle("Running test: " + descriptor)
                         }
+
                         failFast = true
                         //because currently can't run more then one instance of the server
                         maxParallelForks = 1
@@ -80,18 +103,31 @@ testing {
             targets {
                 all {
                     testTask.configure {
+
+                        beforeTest { descriptor ->
+                            logger.lifecycle("Running test: " + descriptor)
+                        }
+
+                        doFirst{
+                            println "in integrationTest task doFirst"
+                            ext.appLauncher = project.getGradle().getSharedServices().getRegistrations().getByName('appLauncher').getService().get()
+                        }
+
+                        doLast{
+                            println "in integrationTest task doLast"
+                            println "Stopping integration test app.."
+                            println "Response from shutdown: " + sendHttpGet(integrationTestServerHost,integrationTestServerPort,'shutdown')
+                            ext.appLauncher.close()
+                        }
+
                         //send the host and port system properties to the unit tests
                         jvmArgs = [integrationTestServerHostPropVal,integrationTestServerPortPropVal]
                         minHeapSize = "128m"
                         maxHeapSize = "512m"
-                        beforeTest { descriptor ->
-                            logger.lifecycle("Running test: " + descriptor)
-                        }
                         failFast = true
                         maxParallelForks = 1
                         forkEvery = 1
-                        dependsOn('startServer')
-                        finalizedBy('stopServer')
+                        dependsOn('installDist')//installDist is from application plugin
                         //strong ordering, startServer is also mustRunAfter(test) otherwise
                         //there may be a situation that startServer will be called at the same
                         //time with test.
@@ -105,92 +141,3 @@ testing {
 }
 
 
-
-
-//TODO: if integrationTest task is uptodate the start server will still execute.
-// its not possible to know if the integrationTest task is going to execute.
-// even setting the same inputs to integrationTest and startServer is not the right solution, it may work
-// but still something between startServer and integrationTest may change the input.
-// so in any case when startServer is called its too early to decide if integrationTest will be upToDate
-// or not.
-// and therefore the solution is probably a build service.
-import org.apache.tools.ant.taskdefs.condition.Os
-tasks.register('startServer',DefaultTask.class){
-
-    mustRunAfter(test)
-    dependsOn installDist
-
-    onlyIf{
-        gradle.taskGraph.hasTask(':application:integrationTest')
-    }
-
-    doFirst{
-
-        println "Starting integration test server.."
-
-        def javaHome = javaToolchains.launcherFor {
-            languageVersion = JavaLanguageVersion.of(11)
-        }.get().getMetadata().getInstallationPath().getAsFile().getAbsolutePath()
-
-
-        def scriptName = Os.isFamily(Os.FAMILY_WINDOWS) ? "application.bat" : "application"
-        def startScript = file(installDist.getDestinationDir().getAbsolutePath()+"/bin/"+scriptName).getAbsolutePath()
-        ProcessBuilder builder = new ProcessBuilder(startScript);
-        builder.directory(installDist.getDestinationDir());
-        builder.environment().put("JAVA_HOME",javaHome)
-        //send the host and port system properties to the application. the start script generated by
-        //gradle Application plugin considers JAVA_OPTS.
-        builder.environment().put("JAVA_OPTS",integrationTestServerHostPropVal+" "+integrationTestServerPortPropVal)
-        def logsDir = file(installDist.getDestinationDir().getAbsolutePath()+"/logs")
-        logsDir.mkdirs()
-        def logFile = new File(logsDir,"app.log")
-        builder.redirectOutput(logFile)
-        builder.redirectError(logFile)
-        builder.redirectErrorStream(true)
-
-        Process process = builder.start()
-        //wait a second to let the app start, 200 millis is probably enough too
-        sleep(1000)
-
-        logFile.any {line ->
-            println line
-            if (line.contains("Server started")) {
-                println "Integration test server is ready!"
-                return true;
-            }
-        }
-
-        if(!process.isAlive()){
-            throw new GradleException("Could not start the application for integration tests, server termineted abnormaly. exit value: "+process.exitValue())
-        }
-
-        ext.serverProcess = process
-    }
-}
-
-
-tasks.register('stopServer'){
-
-    outputs.upToDateWhen{false}
-
-    onlyIf{
-        //if stopServer is the only task called we don't want to cause configuration
-        //of startServer, calling only tasks.startServer will cause configuration od startServer,
-        //also use of the configuration_avoidance api like tasks.named doesn't help because we call
-        //getState() and that causes configuration.
-        //checking if the taskGraph has startServer avoids the startServer configuration.
-        gradle.taskGraph.hasTask(':application:startServer') &&
-                                    tasks.startServer.getState().getExecuted() &&
-                                    tasks.startServer.getState().getFailure() == null
-    }
-
-    doFirst {
-        println "Stopping integration test server.."
-        println "Response from shutdown: " + sendHttpGet(integrationTestServerHost,integrationTestServerPort,'shutdown')
-        if (tasks.startServer.serverProcess != null) {
-            tasks.startServer.serverProcess.destroy()
-        }
-        println "Integration test server stopped."
-    }
-
-}

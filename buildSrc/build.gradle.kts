@@ -4,11 +4,11 @@ plugins {
 }
 
 
-//gradlePlugin {
-//    plugins {
-//        create("SamplePlugin") {
-//            id = "org.sk.sample.plugin.SamplePlugin"
-//            implementationClass = "org.sk.sample.plugin.SamplePlugin"
-//        }
-//    }
-//}
+gradlePlugin {
+    plugins {
+        create("AppLauncherPlugin") {
+            id = "org.sk.sample.plugin.applauncher.AppLauncherPlugin"
+            implementationClass = "org.sk.sample.plugin.applauncher.AppLauncherPlugin"
+        }
+    }
+}
