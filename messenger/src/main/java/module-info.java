@@ -1,9 +1,8 @@
-import org.gradle.sample.messenger.spi.MessageProvider;
+import org.sk.sample.message.spi.MessageProvider;
 
-module org.gradle.sample.messenger {
-    exports org.gradle.sample.messenger;
-    exports org.gradle.sample.messenger.spi;
-    requires org.apache.commons.lang3;
-    requires org.gradle.sample.journal;
+module sample.messenger {
+    exports org.sk.sample.messenger;
+    requires sample.messages.journal;
+    requires sample.message.provider;
     uses MessageProvider;
 }

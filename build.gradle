@@ -1,28 +1,24 @@
-//plugins {
-//    id 'org.javamodularity.moduleplugin' version '1.8.10' apply false
-//}
-
-
 //TODO:
-// toolchain
-// add another provider module that prints all modules loaded
-// change the package name org.gradle to sk
-// try with resources example
-// use var
+// clean code
 // add logging
+// package the app
+// add jacoco and sonar, checkstyle
+// try with resources example
+// readme
+// NOTE: i changed it but maybe check this bug. the task buildNeeded does not work for the messenger project, it fails on circular dependency,
+// it looks like a bug in gradle that wasn't solved completely: https://github.com/gradle/gradle/issues/1647
+// maybe make a maven build too???
+
+
+// BIG TODO : remove all todos
 
 allprojects {
     version = '1.0.0'
-    group = 'org.sk.gradle.sample'
+    group = 'org.sk.sample.modules'
 
     repositories {
         mavenCentral()
     }
+
 }
 
-subprojects {
-
-    tasks.withType(Test).configureEach {
-        useJUnitPlatform()
-    }
-}

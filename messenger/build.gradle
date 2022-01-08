@@ -1,27 +1,59 @@
+//file:noinspection GroovyAssignabilityCheck
 plugins {
-    id 'java-library'
-    //using versions catalogs, same as: id 'org.javamodularity.moduleplugin'
-    alias(pluginslibs.plugins.moduleplugin)
+    id 'sample.java-library-conventions-with-it'
 }
-
 
 dependencies {
-
+    implementation project(':message-provider')
     implementation project(':message-journal')
-    implementation libs.commons.lang3
-
-    testImplementation testinglibs.junit.jupiter
-    testRuntimeOnly project(':cmd-message-provider')
-    testRuntimeOnly project(':env-message-provider')
 }
 
 
-test {
-    testLogging {
-        showStandardStreams project.hasProperty("show.unit.tests.stdout")
-        events "passed", "skipped", "failed"
-        showStackTraces true
-        exceptionFormat 'full'
-        showCauses true
+/*
+Testing:
+see: https://docs.gradle.org/current/userguide/java_testing.html#sec:java_testing_modular
+
+the default 'test' task is whitebox testing. it has no module boundaries, gradle will
+execute it with classpath and it has full access to the main source set classes.
+
+the integrationTest is blackbox testing because it needs to test the service providers and thus must run
+in the module system, it is a module by itself with a module-info.java. it requires the main module and
+the testing modules. gradle will execute it with --module-path.
+
+the third option of patching the module with the test classes is more verbose and error pron
+and its not clear why its necessary. but it can be done easily, there are example of how to do it:
+https://discuss.gradle.org/t/correct-gradle-eclipse-juni5-java9-configuration/27405
+the gradle module plugin does it too: https://github.com/java9-modularity/gradle-modules-plugin/tree/v1.8.10.
+
+the unit can tests print the providers messages to the console with -Pshow.unit.tests.stdout, which are the
+command line that started the process and the environment and system properties, its nice to explore the
+command line and see how gradle executes the unit tests.
+*/
+
+
+//sample.java-library-conventions-with-it adds basic configuration for a test task called
+//integrationTest which can be further configured here.
+//the integrationTest task is bound to the check lifecycle task.
+
+testing {
+    suites {
+        test {
+            dependencies {
+                implementation libs.commons.lang3
+            }
+        }
+
+        integrationTest {
+            dependencies {
+                implementation libs.commons.lang3
+                //the project's dependency for message-provider is implementation which does not
+                // expose it to this test suite because this test suite is a module. blackbox testing.
+                // so we need to add it explicitly.
+                implementation project(':message-provider')
+                runtimeOnly project(':cmd-message-provider')
+                runtimeOnly project(':env-message-provider')
+            }
+        }
     }
 }
+

@@ -1,0 +1,58 @@
+//file:noinspection GroovyAssignabilityCheck
+
+
+allprojects {
+    version = '1.0'
+    group = 'org.sk.sample.journal'
+
+    repositories {
+        mavenCentral()
+    }
+}
+
+/*
+This is a simple multimodule project that produces Journals.
+configuration of the sub projects is done here in subprojects block as opposed to script plugins
+in the main java-modules-gradle-sample application.
+subproject block can get too complex with large projects, but this is a very simple project.
+all the tests are whitebox testing.
+ */
+
+subprojects {
+
+    apply plugin: 'java-library'
+
+
+    repositories {
+        mavenCentral()
+    }
+
+
+    java {
+        toolchain {
+            languageVersion = JavaLanguageVersion.of(libs.versions.java.version.get())
+        }
+    }
+
+    testing {
+        suites {
+            test {
+                useJUnitJupiter(testinglibs.versions.junit.jupiter.get())
+                targets {
+                    all {
+                        testTask.configure {
+                            testLogging {
+                                showStandardStreams project.hasProperty("show.unit.tests.stdout")
+                                events "passed", "skipped", "failed"
+                                showStackTraces true
+                                exceptionFormat 'full'
+                                showCauses true
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+}

@@ -1,25 +1,75 @@
+//file:noinspection GroovyAssignabilityCheck
 plugins {
-    id 'java-library'
+    id 'sample.java-library-conventions'
 }
 
 dependencies {
-
-    //could use 'implementation' but messenger is only necessary for compile and test
-    //implementation project(':messenger')
-
-    compileOnly project(':messenger')
-
-    testImplementation project(':messenger')
-    testImplementation testinglibs.junit.jupiter
-
+    api project(':message-provider')
 }
 
-test {
-    testLogging {
-        showStandardStreams project.hasProperty("show.unit.tests.stdout")
-        events "passed", "skipped", "failed"
-        showStackTraces true
-        exceptionFormat 'full'
-        showCauses true
+
+/*
+Testing:
+see: see: https://docs.gradle.org/current/userguide/java_testing.html#sec:java_testing_modular
+
+This module shows how to patch the module system to do whitebox testing with module boundaries.
+The test org.sk.sample.cmd.CommandLineMessageProviderTest.testAsService loads a service provider and needs
+to run inside the module system.
+The compileTestJava and test tasks are patched to run with module-path instead of classpath.
+This technic is just for demonstration, i prefer the solution in project messenger with two test
+tasks, one for whitebox and one for blackbox testing.
+
+In any case ,To do the same in a clean way use the gradle module plugin that does the same thing and more:
+https://github.com/java9-modularity/gradle-modules-plugin/tree/v1.8.10,
+
+ */
+
+
+def moduleName = "sample.cmdMessageProvider"
+testing {
+    suites {
+        test {
+            targets {
+                all {
+                    testTask.configure {
+                        doFirst {
+                            jvmArgs = [
+                                    '--module-path', classpath.asPath,
+                                    '--patch-module', "$moduleName=" + files(project.sourceSets.test.java.classesDirectory).asPath +
+                                            File.pathSeparator + files(project.sourceSets.test.output.resourcesDir).asPath +
+                                            File.pathSeparator + files(project.sourceSets.main.output.resourcesDir).asPath,
+                                    '--add-modules', 'ALL-MODULE-PATH',
+                                    '--add-reads', "$moduleName=org.junit.jupiter.api",
+                                    '--add-reads', "$moduleName=org.junit.jupiter.params",
+                                    '--add-exports', "org.junit.platform.commons/org.junit.platform.commons.util=ALL-UNNAMED",
+                                    '--add-exports', "org.junit.platform.commons/org.junit.platform.commons.logging=ALL-UNNAMED",
+                                    '--add-opens', "$moduleName/org.sk.sample.cmd=ALL-UNNAMED",
+                                    '--add-opens', "$moduleName/org.sk.sample.cmd=org.junit.platform.commons",
+                                    '--add-reads', "$moduleName=sample.testutils",
+                            ]
+                            classpath = files()
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+
+compileTestJava {
+    inputs.property("moduleName", moduleName)
+    doFirst {
+        options.compilerArgs = [
+                '--module-path', classpath.asPath,
+                '--add-modules', 'org.junit.jupiter.api',
+                '--add-reads', "$moduleName=org.junit.jupiter.api",
+                '--add-modules', 'org.junit.jupiter.params',
+                '--add-reads', "$moduleName=org.junit.jupiter.params",
+                '--add-modules', 'sample.testutils',
+                '--add-reads', "$moduleName=sample.testutils",
+                '--patch-module', "$moduleName=" + files(sourceSets.test.java.srcDirs).asPath,
+        ]
+        classpath = files()
     }
 }

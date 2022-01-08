@@ -1,0 +1,7 @@
+
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(libs.versions.java.version.get())
+    }
+}

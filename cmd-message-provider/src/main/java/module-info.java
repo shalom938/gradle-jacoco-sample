@@ -1,8 +1,7 @@
-import org.gradle.sample.cmd.CommandLineMessageProvider;
-import org.gradle.sample.messenger.spi.MessageProvider;
+import org.sk.sample.cmd.CommandLineMessageProvider;
+import org.sk.sample.message.spi.MessageProvider;
 
-module org.gradle.sample.cmdMessageProvider {
-    requires org.gradle.sample.messenger;
-    provides MessageProvider
-            with CommandLineMessageProvider;
+module sample.cmdMessageProvider {
+    requires transitive sample.message.provider;
+    provides MessageProvider with CommandLineMessageProvider;
 }

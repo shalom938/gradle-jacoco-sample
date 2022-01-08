@@ -1,0 +1,10 @@
+dependencies {
+    implementation project(':journal')
+    implementation libs.google.guava
+}
+
+compileJava {
+    //There's a compiler warning because this module opens packages to modules that are not
+    //known during compile time.
+    options.compilerArgs += ['-Xlint:-module']
+}

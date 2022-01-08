@@ -1,9 +1,20 @@
-rootProject.name = 'gradle-jacoco-sample'
+rootProject.name = 'java-modules-gradle-sample'
+
+includeBuild('journals') {
+    dependencySubstitution {
+        substitute module('org.sk.sample.journal:journals-all') using project(':journals-all')
+        substitute module('org.sk.sample.journal:journal') using project(':journal')
+    }
+}
+
+include 'test-utils'
 include 'utilities'
+include 'message-provider'
 include 'cmd-message-provider'
 include 'env-message-provider'
 include 'message-journal'
 include 'messenger'
+include 'messaging'
 include 'application'
 
 
@@ -12,13 +23,15 @@ enableFeaturePreview('VERSION_CATALOGS')
 dependencyResolutionManagement {
     versionCatalogs {
         libs {
-            //version('groovy', '3.0.5')
+            version('java-version', '11')
             alias('google-guava').to('com.google.guava:guava:31.0.1-jre')
             alias('commons-lang3').to('org.apache.commons:commons-lang3:3.12.0')
             alias('commons-text').to('org.apache.commons:commons-text:1.9')
         }
         testinglibs {
-            alias('junit-jupiter').to('org.junit.jupiter:junit-jupiter:5.8.2')
+            version('junit-jupiter', '5.7.2')
+            //TODO: with junit 5.8.2 it fails, see: https://github.com/junit-team/junit5/issues/2730
+            alias('junit-jupiter').to('org.junit.jupiter:junit-jupiter:5.7.2')
 //            alias('commons-lang3').to('org.apache.commons', 'commons-lang3').version {
 //                strictly '[3.8, 4.0['
 //                prefer '3.9'
@@ -27,6 +40,6 @@ dependencyResolutionManagement {
         pluginslibs {
             alias('moduleplugin').toPluginId('org.javamodularity.moduleplugin').version('1.8.10')
         }
-
     }
 }
+

@@ -1,0 +1,10 @@
+plugins {
+    id 'java-library'
+}
+
+dependencies {
+    //because its a container project it needs to expose the messenger api.
+    api project(':messenger')
+    implementation project(':cmd-message-provider')
+    implementation project(':env-message-provider')
+}

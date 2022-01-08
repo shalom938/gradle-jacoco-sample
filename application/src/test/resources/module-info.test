@@ -1,13 +1,17 @@
 //
 // Patch, i.e. configure, Java module system at test-runtime
-//
+// processed by org.javamodularity.moduleplugin
+//demonstrate how to use a module only in unit tests,e.g:java.management
 
-//the gradle moduleplugin does patch the test module
-//and supports the other directives as --add-reads --add-open
-
-//no need to patch , the gradle moduleplugin does that
-//--patch-module
-//    org.gradle.sample.messenger="/home/shalom/workspace/examples/gradle/gradle-jacoco-sample/messenger/build/classes/java/main"
-
-//demonstrate how to use a module ,e.g:java.management, in unit tests code without changing the module-info.java
-//or adding module-info.java to the test packages:
+--add-modules
+    java.management
+--add-reads
+    sample.app=java.management
+--add-modules
+    sample.testutils
+--add-reads
+    sample.app=sample.testutils
+--add-modules
+    org.apache.commons.lang3
+--add-reads
+    sample.app=org.apache.commons.lang3

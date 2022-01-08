@@ -1,22 +1,18 @@
 plugins {
-    id 'java-library'
+    id 'sample.java-library-conventions'
 }
 
 dependencies {
-
     implementation project(':utilities')
+    //journals-all is from an included build
+    api 'org.sk.sample.journal:journals-all:1.0'
     implementation libs.google.guava
-
-    testImplementation testinglibs.junit.jupiter
 }
 
-
-test {
-    testLogging {
-        showStandardStreams project.hasProperty("show.unit.tests.stdout")
-        events "passed", "skipped", "failed"
-        showStackTraces true
-        exceptionFormat 'full'
-        showCauses true
-    }
+compileJava {
+    //There's a compiler warning because this module has a qualified export
+    //'exports org.sk.sample.messagejournal to sample.messenger' and sample.messenger is not
+    //available during compile of this module.
+    //this will also disable other warnings related to modules.
+    options.compilerArgs += ['-Xlint:-module']
 }

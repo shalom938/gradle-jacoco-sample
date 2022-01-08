@@ -1,0 +1,30 @@
+//file:noinspection GroovyAssignabilityCheck
+//file:noinspection GrPackage
+plugins {
+    id 'jvm-test-suite'
+}
+
+
+testing {
+    suites {
+        test {
+            useJUnitJupiter(testinglibs.versions.junit.jupiter.get())
+            dependencies {
+                implementation project(':test-utils')
+            }
+        }
+    }
+}
+
+
+project.afterEvaluate {
+    tasks.withType(Test).configureEach() {
+        testLogging {
+            showStandardStreams project.hasProperty("show.unit.tests.stdout")
+            events "passed", "skipped", "failed"
+            showStackTraces true
+            exceptionFormat 'full'
+            showCauses true
+        }
+    }
+}

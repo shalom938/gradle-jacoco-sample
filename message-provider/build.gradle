@@ -1,0 +1,8 @@
+plugins {
+    id 'sample.java-library-conventions'
+}
+
+
+dependencies {
+    implementation libs.commons.lang3
+}

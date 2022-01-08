@@ -1,0 +1,2 @@
+This folder is not part of the gradle buildSrc standard.
+its just a container for gradle scripts to include with 'apply from'
