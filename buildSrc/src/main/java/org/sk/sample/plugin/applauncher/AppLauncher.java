@@ -27,14 +27,14 @@ public abstract class AppLauncher implements BuildService<AppLauncher.AppLaunche
 
     public AppLauncher()  {
         System.out.println("in AppLauncher constructor "+this.toString());
-        try {
-            startApp();
-        } catch (IOException e) {
-            throw new GradleException("could not start application "+e.getMessage(),e);
-        }
+//        try {
+//            startApp();
+//        } catch (IOException e) {
+//            throw new GradleException("could not start application "+e.getMessage(),e);
+//        }
     }
 
-    protected void startApp() throws IOException {
+    public void startApp() throws IOException {
 
         int port = getParameters().getPort().get();
         String host = getParameters().getHost().get();

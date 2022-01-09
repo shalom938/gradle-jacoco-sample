@@ -1,6 +1,7 @@
 //file:noinspection GroovyAssignabilityCheck
 plugins {
     id 'sample.java-application-conventions-with-it'
+    id 'org.sk.sample.plugin.applauncher.AppLauncherPlugin'
     alias(pluginslibs.plugins.moduleplugin)
 }
 
@@ -15,6 +16,17 @@ ext{
     integrationTestServerPort = project.getProperty('org.sk.sample.app.it.server.port')
     integrationTestServerHostPropVal = "-Dorg.sk.sample.app.host="+integrationTestServerHost
     integrationTestServerPortPropVal = "-Dorg.sk.sample.app.port="+integrationTestServerPort
+}
+
+
+appLauncher{
+    host = integrationTestServerHost
+    port = integrationTestServerPort as Integer
+    installationDirectory = installDist.getDestinationDir()
+    javaHome = javaToolchains.launcherFor {
+                    languageVersion = JavaLanguageVersion.of(11)
+                        }.get().getMetadata().getInstallationPath()
+    javaOpts = integrationTestServerHostPropVal+" "+integrationTestServerPortPropVal
 }
 
 
@@ -55,17 +67,6 @@ the integrationTest task depends on the check lifecycle task so it will run on e
     for the purpose of this project its enough and better then start/stop server tasks.
  */
 
-
-
-project.getGradle().getSharedServices().registerIfAbsent("appLauncher", org.sk.sample.plugin.applauncher.AppLauncher.class, spec -> {
-    spec.getParameters().getPort().set(integrationTestServerPort as Integer);
-    spec.getParameters().getHost().set(integrationTestServerHost);
-    spec.getParameters().getJavaOpts().set(integrationTestServerHostPropVal+" "+integrationTestServerPortPropVal);
-    spec.getParameters().getInstallationDirectory().set(installDist.getDestinationDir());
-    spec.getParameters().getJavaHome().set(javaToolchains.launcherFor {
-                                                                languageVersion = JavaLanguageVersion.of(11)
-                                                                }.get().getMetadata().getInstallationPath());
-});
 
 
 testing {
@@ -111,6 +112,7 @@ testing {
                         doFirst{
                             println "in integrationTest task doFirst"
                             ext.appLauncher = project.getGradle().getSharedServices().getRegistrations().getByName('appLauncher').getService().get()
+                            ext.appLauncher.startApp()
                         }
 
                         doLast{
