@@ -1,5 +1,3 @@
-//file:noinspection GroovyAssignabilityCheck
-//file:noinspection GrPackage
 plugins {
     id 'sample.common-logic'
     id 'java-library'

@@ -1,6 +1,7 @@
-//file:noinspection GroovyAssignabilityCheck
 plugins {
-    id 'sample.java-application-conventions-with-it'
+    //not using sample.java-application-conventions-with-it because in this project we want a custom test task
+    //for integration tests
+    id 'sample.java-application-conventions'
     id 'org.sk.sample.plugin.applauncher.AppLauncherPlugin'
     alias(pluginslibs.plugins.moduleplugin)
 }
@@ -44,30 +45,45 @@ application {
 
 /*
 Testing:
-This module shows how to do whitebox testing with module boundaries using org.javamodularity.moduleplugin.
+This module 'test' suite shows how to do whitebox testing with module boundaries using org.javamodularity.moduleplugin.
 the test AppMessengerTest loads a service provider and therefore needs to run in the module system.
 moduleplugin does all the necessary patching.
 module cmd-message-provider shows how to do that without the plugin.
 module messenger has separate test suites for whitebox and blackbox testing which is my preferred solution.
 
 This module also adds integration tests.
-the integration tests run against a real application. it depends on startServer and finalized by
-stopServer tasks. the startServer task needs to be asynchronous, start the server and continue
-with the build.
+the integration tests are simple unit tests and they run against a real application.
+the real app is started by a gradle build service AppLauncher.
 the integrationTest task depends on the check lifecycle task so it will run on every build.
  */
 
 
 /*
-    starting the app before integration tests:
+    starting the application before the integration tests start:
     in this example the app is started from a build service AppLauncher.
+    the service is installed by AppLauncherPlugin which also adds an extension to this project called
+    'appLauncher' which can be used to configure the AppLauncher service.
+    the AppLauncher executes the app installed by the task 'installDist' which is provided by the application plugin
+    and installs the app in the build directory. another option would be to use the distribution zip that is always created
+    by the application plugin.
+    the integration tests is a custom Test task that starts and stops the server using AppLauncher before the unit
+    tests start.
     Notes:
-    it can only be configured once per build, although its defined in this project it is global for the build.
+    the build service can only be configured once per build, although its defined in this project it is global for the build.
     its a kind of singleton, can only start one server.
     for the purpose of this project its enough and better then start/stop server tasks.
  */
 
 
+/*
+ todo: some issues to consult the gradle community:
+ i understand that a build service is per the whole project and is singleton, but is it ok the way i did
+ it with start/stop called from the integration test task
+ how to replace the Test task to custom task in JvmTestSuite , see how i did it
+ */
+
+def suite = testing.suites.register('appIntegrationTest',JvmTestSuite).get()
+suite.targets.registerBinding(org.sk.sample.plugin.applauncher.MyJvmTestSuiteTarget.class, org.sk.sample.plugin.applauncher.MyDefaultJvmTestSuiteTarget.class)
 
 testing {
     suites {
@@ -91,8 +107,19 @@ testing {
             }
         }
 
-        integrationTest {
+        appIntegrationTest(JvmTestSuite) {
+            useJUnitJupiter(testinglibs.versions.junit.jupiter.get())
+            sources {
+                java {
+                    srcDir 'src/integrationTest/java'
+                }
+                resources {
+                    srcDir 'src/integrationTest/resources'
+                }
+            }
             dependencies {
+                implementation project
+                implementation project(':test-utils')
                 implementation libs.commons.lang3
                 //the project's dependency for message-provider is implementation which does not
                 // expose it to this test suite because this test suite is a module. blackbox testing.
@@ -101,25 +128,46 @@ testing {
                 runtimeOnly project(':cmd-message-provider')
                 runtimeOnly project(':env-message-provider')
             }
+
+            //targets.registerBinding(org.sk.sample.plugin.applauncher.MyJvmTestSuiteTarget.class, org.sk.sample.plugin.applauncher.MyDefaultJvmTestSuiteTarget.class)
+            //targets.getByName('appIntegrationTest').getTestTask().get().setEnabled(false)
+//            targets {
+//                all {
+//                    testTask.configure {
+//                        println "configuring enabled = false for task "+name
+//                        enabled = false
+//                    }
+//                }
+//            }
             targets {
                 all {
                     testTask.configure {
+                        println "configuring enabled = false for task "+name + ",type "+it.getClass()
+                        enabled = false
+                    }
+                }
+                myAppIntegrationTest(org.sk.sample.plugin.applauncher.MyJvmTestSuiteTarget.class){
+                    println "in suite $name, class: "+it.getClass()
+                    //println "test task $name, class: "+it.getTestTask().get().getClass()
+                    testTask.configure {
+                        println "configuring $name, class: "+it.getClass()
+                        enabled = true
 
                         beforeTest { descriptor ->
                             logger.lifecycle("Running test: " + descriptor)
                         }
 
                         doFirst{
-                            println "in integrationTest task doFirst"
-                            ext.appLauncher = project.getGradle().getSharedServices().getRegistrations().getByName('appLauncher').getService().get()
-                            ext.appLauncher.startApp()
+                            println "in myAppIntegrationTest task doFirst ,name: "+name +", class:"+it.getClass()
+//                            ext.appLauncher = project.getGradle().getSharedServices().getRegistrations().getByName('appLauncher').getService().get()
+//                            ext.appLauncher.startApp()
                         }
 
                         doLast{
-                            println "in integrationTest task doLast"
-                            println "Stopping integration test app.."
-                            println "Response from shutdown: " + sendHttpGet(integrationTestServerHost,integrationTestServerPort,'shutdown')
-                            ext.appLauncher.close()
+                            println "in myAppIntegrationTest task doLast"
+//                            println "Stopping integration test app.."
+//                            println "Response from shutdown: " + sendHttpGet(integrationTestServerHost,integrationTestServerPort,'shutdown')
+//                            ext.appLauncher.close()
                         }
 
                         //send the host and port system properties to the unit tests
@@ -143,3 +191,6 @@ testing {
 }
 
 
+tasks.named('check') {
+    dependsOn(testing.suites.appIntegrationTest)
+}

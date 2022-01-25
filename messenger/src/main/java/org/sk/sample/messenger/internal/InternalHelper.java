@@ -8,6 +8,6 @@ import java.util.Optional;
 public class InternalHelper {
     public String getMessageFromProvider(MessageProvider messageProvider) {
         Optional<String> msg = messageProvider.nextMessage();
-        return msg.orElseGet(null);
+        return msg.orElse(null);
     }
 }

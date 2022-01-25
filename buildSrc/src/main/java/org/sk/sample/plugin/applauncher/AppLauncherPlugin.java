@@ -8,9 +8,9 @@ import org.gradle.jvm.toolchain.JavaToolchainService;
 
 public class AppLauncherPlugin implements Plugin<Project> {
 
-
     @Override
     public void apply(final Project project) {
+
         var javaHome = project.getExtensions().getByType(JavaToolchainService.class).
                 launcherFor(javaToolchainSpec ->
                         javaToolchainSpec.getLanguageVersion().set(JavaLanguageVersion.of(11))).
@@ -19,7 +19,7 @@ public class AppLauncherPlugin implements Plugin<Project> {
 
         var extension = project.getExtensions().create("appLauncher", AppLauncherProjectExtension.class);
         extension.getJavaHome().convention(javaHome);
-        //todo: take the value from installDist task
+        //this is a convention, the actual path should be set in the extension
         extension.getInstallationDirectory().convention(project.getLayout().getBuildDirectory().get().dir("install/application"));
 
 

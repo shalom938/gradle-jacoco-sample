@@ -13,8 +13,8 @@ public class AppMain {
         try {
             Server server = new Server(Conf.getAddress(), Conf.getPort());
             server.start();
-            System.out.println("Server started " + server.toString());
-        }catch (Throwable e){
+            System.out.println("Server started " + server);
+        }catch (Exception e){
             System.out.println("Could not start server " + e.getMessage());
             e.printStackTrace();
             System.exit(1);

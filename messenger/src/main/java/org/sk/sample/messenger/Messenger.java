@@ -13,9 +13,6 @@ public class Messenger {
     private MessagesJournal journal = MessagesJournal.create();
     private InternalHelper internalHelper = new InternalHelper();
 
-    public Messenger() {
-    }
-
 
     public Map<String, String> getAllMessages() {
         Map<String, String> messages = new LinkedHashMap<>();

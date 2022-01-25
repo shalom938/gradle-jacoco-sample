@@ -18,15 +18,15 @@ class MessengerTest {
 
         Messenger messenger = new Messenger();
         Map<String, String> msgs = messenger.getAllMessages();
-        assertEquals(2, msgs.size(), "expecting 2 messages");
         assertNotNull(msgs, "messenger returned null");
         assertFalse(msgs.isEmpty(), "messenger returned empty map");
+        assertEquals(2, msgs.size(), "expecting 2 messages");
 
-        msgs.forEach((k, v) -> {
-            assertNotNull(k, "message provider name is null");
-            assertNotNull(k, "message provider message is null");
+        msgs.forEach((key, value) -> {
+            assertNotNull(key, "message provider name is null");
+            assertNotNull(value, "message provider message is null");
             System.out.println("***************************************************");
-            System.out.println(StringUtils.capitalize("Got message from ".concat(k).concat(", message: ").concat(v)));
+            System.out.println(StringUtils.capitalize("got message from ".concat(key).concat(", message: ").concat(value)));
         });
 
     }

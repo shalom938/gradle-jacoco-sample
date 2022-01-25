@@ -1,5 +1,3 @@
-//file:noinspection GrPackage
-//file:noinspection GroovyAssignabilityCheck
 testing {
     suites {
         integrationTest(JvmTestSuite) {
