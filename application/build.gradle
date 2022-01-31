@@ -1,6 +1,8 @@
-//file:noinspection GroovyAssignabilityCheck
 plugins {
-    id 'sample.java-application-conventions-with-it'
+    //not using sample.java-application-conventions-with-it because in this project we want a custom test task
+    //for integration tests
+    id 'sample.java-application-conventions'
+    id 'org.sk.sample.plugin.applauncher.AppLauncherPlugin'
     alias(pluginslibs.plugins.moduleplugin)
 }
 
@@ -18,6 +20,17 @@ ext{
 }
 
 
+appLauncher{
+    host = integrationTestServerHost
+    port = integrationTestServerPort as Integer
+    installationDirectory = installDist.getDestinationDir()
+    javaHome = javaToolchains.launcherFor {
+                    languageVersion = JavaLanguageVersion.of(11)
+                        }.get().getMetadata().getInstallationPath()
+    javaOpts = integrationTestServerHostPropVal+" "+integrationTestServerPortPropVal
+}
+
+
 dependencies {
     implementation project(':messaging')
     implementation project(':utilities')
@@ -32,20 +45,45 @@ application {
 
 /*
 Testing:
-This module shows how to do whitebox testing with module boundaries using org.javamodularity.moduleplugin.
+This module 'test' suite shows how to do whitebox testing with module boundaries using org.javamodularity.moduleplugin.
 the test AppMessengerTest loads a service provider and therefore needs to run in the module system.
 moduleplugin does all the necessary patching.
 module cmd-message-provider shows how to do that without the plugin.
 module messenger has separate test suites for whitebox and blackbox testing which is my preferred solution.
 
 This module also adds integration tests.
-the integration tests run against a real application. it depends on startServer and finalized by
-stopServer tasks. the startServer task needs to be asynchronous, start the server and continue
-with the build.
+the integration tests are simple unit tests and they run against a real application.
+the real app is started by a gradle build service AppLauncher.
 the integrationTest task depends on the check lifecycle task so it will run on every build.
  */
 
 
+/*
+    starting the application before the integration tests start:
+    in this example the app is started from a build service AppLauncher.
+    the service is installed by AppLauncherPlugin which also adds an extension to this project called
+    'appLauncher' which can be used to configure the AppLauncher service.
+    the AppLauncher executes the app installed by the task 'installDist' which is provided by the application plugin
+    and installs the app in the build directory. another option would be to use the distribution zip that is always created
+    by the application plugin.
+    the integration tests is a custom Test task that starts and stops the server using AppLauncher before the unit
+    tests start.
+    Notes:
+    the build service can only be configured once per build, although its defined in this project it is global for the build.
+    its a kind of singleton, can only start one server.
+    for the purpose of this project its enough and better then start/stop server tasks.
+ */
+
+
+/*
+ todo: some issues to consult the gradle community:
+ i understand that a build service is per the whole project and is singleton, but is it ok the way i did
+ it with start/stop called from the integration test task
+ how to replace the Test task to custom task in JvmTestSuite , see how i did it
+ */
+
+def suite = testing.suites.register('appIntegrationTest',JvmTestSuite).get()
+suite.targets.registerBinding(org.sk.sample.plugin.applauncher.MyJvmTestSuiteTarget.class, org.sk.sample.plugin.applauncher.MyDefaultJvmTestSuiteTarget.class)
 
 testing {
     suites {
@@ -56,9 +94,11 @@ testing {
             targets {
                 all {
                     testTask.configure {
+
                         beforeTest { descriptor ->
                             logger.lifecycle("Running test: " + descriptor)
                         }
+
                         failFast = true
                         //because currently can't run more then one instance of the server
                         maxParallelForks = 1
@@ -67,8 +107,19 @@ testing {
             }
         }
 
-        integrationTest {
+        appIntegrationTest(JvmTestSuite) {
+            useJUnitJupiter(testinglibs.versions.junit.jupiter.get())
+            sources {
+                java {
+                    srcDir 'src/integrationTest/java'
+                }
+                resources {
+                    srcDir 'src/integrationTest/resources'
+                }
+            }
             dependencies {
+                implementation project
+                implementation project(':test-utils')
                 implementation libs.commons.lang3
                 //the project's dependency for message-provider is implementation which does not
                 // expose it to this test suite because this test suite is a module. blackbox testing.
@@ -77,21 +128,48 @@ testing {
                 runtimeOnly project(':cmd-message-provider')
                 runtimeOnly project(':env-message-provider')
             }
+
+            //targets.registerBinding(org.sk.sample.plugin.applauncher.MyJvmTestSuiteTarget.class, org.sk.sample.plugin.applauncher.MyDefaultJvmTestSuiteTarget.class)
+            //targets.getByName('appIntegrationTest').getTestTask().get().setEnabled(false)
             targets {
                 all {
                     testTask.configure {
+                        println "configuring enabled = false for task "+name + ",type "+it.getClass()
+                        enabled = false
+                    }
+                }
+                myAppIntegrationTest(org.sk.sample.plugin.applauncher.MyJvmTestSuiteTarget.class){
+                    println "in suite $name, class: "+it.getClass()
+                    //println "test task $name, class: "+it.getTestTask().get().getClass()
+                    testTask.configure {
+                        println "configuring $name, class: "+it.getClass()
+                        enabled = true
+
+                        beforeTest { descriptor ->
+                            logger.lifecycle("Running test: " + descriptor)
+                        }
+
+                        doFirst{
+                            println "in myAppIntegrationTest task doFirst ,name: "+name +", class:"+it.getClass()
+//                            ext.appLauncher = project.getGradle().getSharedServices().getRegistrations().getByName('appLauncher').getService().get()
+//                            ext.appLauncher.startApp()
+                        }
+
+                        doLast{
+                            println "in myAppIntegrationTest task doLast"
+//                            println "Stopping integration test app.."
+//                            println "Response from shutdown: " + sendHttpGet(integrationTestServerHost,integrationTestServerPort,'shutdown')
+//                            ext.appLauncher.close()
+                        }
+
                         //send the host and port system properties to the unit tests
                         jvmArgs = [integrationTestServerHostPropVal,integrationTestServerPortPropVal]
                         minHeapSize = "128m"
                         maxHeapSize = "512m"
-                        beforeTest { descriptor ->
-                            logger.lifecycle("Running test: " + descriptor)
-                        }
                         failFast = true
                         maxParallelForks = 1
                         forkEvery = 1
-                        dependsOn('startServer')
-                        finalizedBy('stopServer')
+                        dependsOn('installDist')//installDist is from application plugin
                         //strong ordering, startServer is also mustRunAfter(test) otherwise
                         //there may be a situation that startServer will be called at the same
                         //time with test.
@@ -105,92 +183,6 @@ testing {
 }
 
 
-
-
-//TODO: if integrationTest task is uptodate the start server will still execute.
-// its not possible to know if the integrationTest task is going to execute.
-// even setting the same inputs to integrationTest and startServer is not the right solution, it may work
-// but still something between startServer and integrationTest may change the input.
-// so in any case when startServer is called its too early to decide if integrationTest will be upToDate
-// or not.
-// and therefore the solution is probably a build service.
-import org.apache.tools.ant.taskdefs.condition.Os
-tasks.register('startServer',DefaultTask.class){
-
-    mustRunAfter(test)
-    dependsOn installDist
-
-    onlyIf{
-        gradle.taskGraph.hasTask(':application:integrationTest')
-    }
-
-    doFirst{
-
-        println "Starting integration test server.."
-
-        def javaHome = javaToolchains.launcherFor {
-            languageVersion = JavaLanguageVersion.of(11)
-        }.get().getMetadata().getInstallationPath().getAsFile().getAbsolutePath()
-
-
-        def scriptName = Os.isFamily(Os.FAMILY_WINDOWS) ? "application.bat" : "application"
-        def startScript = file(installDist.getDestinationDir().getAbsolutePath()+"/bin/"+scriptName).getAbsolutePath()
-        ProcessBuilder builder = new ProcessBuilder(startScript);
-        builder.directory(installDist.getDestinationDir());
-        builder.environment().put("JAVA_HOME",javaHome)
-        //send the host and port system properties to the application. the start script generated by
-        //gradle Application plugin considers JAVA_OPTS.
-        builder.environment().put("JAVA_OPTS",integrationTestServerHostPropVal+" "+integrationTestServerPortPropVal)
-        def logsDir = file(installDist.getDestinationDir().getAbsolutePath()+"/logs")
-        logsDir.mkdirs()
-        def logFile = new File(logsDir,"app.log")
-        builder.redirectOutput(logFile)
-        builder.redirectError(logFile)
-        builder.redirectErrorStream(true)
-
-        Process process = builder.start()
-        //wait a second to let the app start, 200 millis is probably enough too
-        sleep(1000)
-
-        logFile.any {line ->
-            println line
-            if (line.contains("Server started")) {
-                println "Integration test server is ready!"
-                return true;
-            }
-        }
-
-        if(!process.isAlive()){
-            throw new GradleException("Could not start the application for integration tests, server termineted abnormaly. exit value: "+process.exitValue())
-        }
-
-        ext.serverProcess = process
-    }
-}
-
-
-tasks.register('stopServer'){
-
-    outputs.upToDateWhen{false}
-
-    onlyIf{
-        //if stopServer is the only task called we don't want to cause configuration
-        //of startServer, calling only tasks.startServer will cause configuration od startServer,
-        //also use of the configuration_avoidance api like tasks.named doesn't help because we call
-        //getState() and that causes configuration.
-        //checking if the taskGraph has startServer avoids the startServer configuration.
-        gradle.taskGraph.hasTask(':application:startServer') &&
-                                    tasks.startServer.getState().getExecuted() &&
-                                    tasks.startServer.getState().getFailure() == null
-    }
-
-    doFirst {
-        println "Stopping integration test server.."
-        println "Response from shutdown: " + sendHttpGet(integrationTestServerHost,integrationTestServerPort,'shutdown')
-        if (tasks.startServer.serverProcess != null) {
-            tasks.startServer.serverProcess.destroy()
-        }
-        println "Integration test server stopped."
-    }
-
+tasks.named('check') {
+    dependsOn(testing.suites.appIntegrationTest)
 }

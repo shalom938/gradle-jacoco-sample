@@ -128,21 +128,19 @@ public class Server {
             os.close();
             exchange.close();
 
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
+            new Thread(() -> {
 
-                    try {
-                        Thread.sleep(200);
-                    } catch (InterruptedException e) {
-                    }
-
-                    stopExecutionService();
-
-                    System.out.println("Stopping Server...");
-                    exchange.getHttpContext().getServer().stop(1);
-                    System.out.println("Server Stopped!");
+                try {
+                    Thread.sleep(200);
+                } catch (InterruptedException e) {
+                    //todo: should rethrow the InterruptedException and restore the interrupted status ?
                 }
+
+                stopExecutionService();
+
+                System.out.println("Stopping Server...");
+                exchange.getHttpContext().getServer().stop(1);
+                System.out.println("Server Stopped!");
             }).start();
         }
     }

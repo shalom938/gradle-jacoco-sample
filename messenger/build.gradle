@@ -1,4 +1,3 @@
-//file:noinspection GroovyAssignabilityCheck
 plugins {
     id 'sample.java-library-conventions-with-it'
 }
@@ -25,7 +24,7 @@ and its not clear why its necessary. but it can be done easily, there are exampl
 https://discuss.gradle.org/t/correct-gradle-eclipse-juni5-java9-configuration/27405
 the gradle module plugin does it too: https://github.com/java9-modularity/gradle-modules-plugin/tree/v1.8.10.
 
-the unit can tests print the providers messages to the console with -Pshow.unit.tests.stdout, which are the
+the unit tests can print the providers messages to the console with -Pshow.unit.tests.stdout, which are the
 command line that started the process and the environment and system properties, its nice to explore the
 command line and see how gradle executes the unit tests.
 */

@@ -9,7 +9,7 @@ plugins {
 
 
 
-//demonstrates hot to use this module as automatic module.
+//demonstrates how to use this module as automatic module.
 jar {
     manifest {
         attributes('Automatic-Module-Name': project.name)

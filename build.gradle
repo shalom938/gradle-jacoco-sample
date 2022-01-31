@@ -1,4 +1,5 @@
 //TODO:
+// the command line in AppMessengerTest looks like its trimmed
 // clean code
 // add logging
 // package the app
@@ -8,6 +9,7 @@
 // NOTE: i changed it but maybe check this bug. the task buildNeeded does not work for the messenger project, it fails on circular dependency,
 // it looks like a bug in gradle that wasn't solved completely: https://github.com/gradle/gradle/issues/1647
 // maybe make a maven build too???
+// javadoc
 
 
 // BIG TODO : remove all todos

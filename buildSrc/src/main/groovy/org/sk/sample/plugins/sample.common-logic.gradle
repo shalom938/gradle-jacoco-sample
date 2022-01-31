@@ -1,4 +1,3 @@
-
 ext.sendHttpGet = { host, port, httpPath ->
     def url = new URL("http://" + host + ":" + port + "/" + httpPath)
     try {
