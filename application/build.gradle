@@ -131,14 +131,6 @@ testing {
 
             //targets.registerBinding(org.sk.sample.plugin.applauncher.MyJvmTestSuiteTarget.class, org.sk.sample.plugin.applauncher.MyDefaultJvmTestSuiteTarget.class)
             //targets.getByName('appIntegrationTest').getTestTask().get().setEnabled(false)
-//            targets {
-//                all {
-//                    testTask.configure {
-//                        println "configuring enabled = false for task "+name
-//                        enabled = false
-//                    }
-//                }
-//            }
             targets {
                 all {
                     testTask.configure {
