@@ -32,8 +32,13 @@ the main app starts a HttpServer that has two end points: msgs and shutdown.
 ./gradlew clean build
 
 
+## journals
+journals is an included build , the project provides a journals. 
+Its ok to develop it as a sub project , it will compile fine, but idea will not 'see' everything 
+because of jpms issues so to develop it its best to open it in intellij as a regular project.
 
-## log4j2:
+
+## logging:
 
 to debug log4j initialization:
 export APPLICATION_OPTS=-Dlog4j2.debug=true
@@ -79,4 +84,8 @@ log4j2-test.xml has a different pattern layout where the date is COMPACT, so lin
 something like '20220302123403955 [Test worker] INFO' are our messages. 
 the unit tests output can be found in build/test-results of every module.
  
-todo: logging from journals. maybe log with slf4j , and in runtime add slf4j to log4j bridge
+
+the journals log to slf4j api, the logging module adds a dependency to log4j-slf4j-impl so slf4j
+will be routed to log4j.
+
+use System.Logger in unit tests 

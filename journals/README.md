@@ -10,6 +10,9 @@ module sample.journal-all.
 
 
 # build
+
+to work on this project its best to open it in idea as a regular project
+
 ./gradlew clean build
 
 # logging

@@ -55,6 +55,18 @@ Configuration:
         additivity: false
         AppenderRef:
           - ref: AppLog
+      -
+        name: org.sk.sample.journal.impl.string
+        level: trace
+        additivity: false
+        AppenderRef:
+          - ref: AppLog
+      -
+        name: org.sk.sample.journals
+        level: debug
+        additivity: false
+        AppenderRef:
+          - ref: AppLog
     Root:
       level: warn
       AppenderRef:
