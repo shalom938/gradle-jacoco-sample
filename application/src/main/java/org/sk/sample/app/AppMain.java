@@ -1,22 +1,24 @@
 package org.sk.sample.app;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.sk.sample.app.server.Server;
 
 public class AppMain {
 
 
+    private static final Logger LOGGER = LogManager.getLogger();
+
+
     public static void main(String[] args){
 
-        System.out.println("Started application with command line: "+ProcessHandle.current().info().commandLine());
-
-        System.out.println("Starting HTTP server ");
+        LOGGER.info("Started application with command line: {}",ProcessHandle.current().info().commandLine());
+        LOGGER.info("Starting HTTP server ");
         try {
-            Server server = new Server(Conf.getAddress(), Conf.getPort());
+            Server server = new Server();
             server.start();
-            System.out.println("Server started " + server);
         }catch (Exception e){
-            System.out.println("Could not start server " + e.getMessage());
-            e.printStackTrace();
+            LOGGER.error("Could not start server", e);
             System.exit(1);
         }
     }

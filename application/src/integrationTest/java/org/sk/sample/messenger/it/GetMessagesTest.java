@@ -1,7 +1,10 @@
 package org.sk.sample.messenger.it;
 
 import org.apache.commons.lang3.StringUtils;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.sk.sample.app.Conf;
 import org.sk.sample.app.internal.client.Client;
 
@@ -10,8 +13,10 @@ import java.net.URISyntaxException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class GetMessagesTest {
 
+    @Order(1)
     @Test
     void testGetMessage() throws URISyntaxException, IOException, InterruptedException {
 
@@ -33,6 +38,23 @@ class GetMessagesTest {
         assertTrue(countHStart > 0,"No messages in body");
         assertEquals(countHStart ,countHEnd,"Wrong html body");
         assertEquals(countHStart,4,"wrong number of lines in body");
+
+    }
+
+
+    @Order(2)
+    @Test
+    void testShutdown() throws URISyntaxException, IOException, InterruptedException {
+        //will actually shutdown the server
+        Client client = new Client(Conf.getAddress(), Conf.getPort());
+
+        var response = client.sendGet("shutdown");
+
+        assertEquals(200,response.getStatusCode(),"Status code is not OK");
+        assertNotNull(response.getBody(),"Response Body is null");
+        assertFalse(response.getBody().isBlank(),"body is blank");
+        System.out.println("Status Code in GetMessagesTest : " + response.getStatusCode());
+        System.out.println("Body in GetMessagesTest : " + response.getBody());
 
     }
 }

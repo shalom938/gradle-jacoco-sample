@@ -1,6 +1,9 @@
 dependencies {
     implementation project(':journal')
     implementation libs.google.guava
+    implementation libs.slf4j.api
+
+    testImplementation libs.slf4j.simple
 }
 
 compileJava {

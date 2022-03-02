@@ -3,6 +3,8 @@ package org.sk.sample.plugin.applauncher;
 import org.apache.tools.ant.taskdefs.condition.Os;
 import org.gradle.api.GradleException;
 import org.gradle.api.file.DirectoryProperty;
+import org.gradle.api.logging.Logger;
+import org.gradle.api.logging.Logging;
 import org.gradle.api.provider.Property;
 import org.gradle.api.services.BuildService;
 import org.gradle.api.services.BuildServiceParameters;
@@ -12,6 +14,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 
 public abstract class AppLauncher implements BuildService<AppLauncher.AppLauncherParams>, AutoCloseable {
+
+    private static final Logger LOGGER = Logging.getLogger(AppLauncher.class);
 
     private Process process;
 
@@ -29,14 +33,7 @@ public abstract class AppLauncher implements BuildService<AppLauncher.AppLaunche
     }
 
 
-    public AppLauncher() {
-        System.out.println("in AppLauncher constructor " + this);
-//        try {
-//            startApp();
-//        } catch (IOException e) {
-//            throw new GradleException("could not start application "+e.getMessage(),e);
-//        }
-    }
+
 
     public void startApp() throws IOException {
 
@@ -46,13 +43,13 @@ public abstract class AppLauncher implements BuildService<AppLauncher.AppLaunche
         String javaHome = getParameters().getJavaHome().get().getAsFile().getAbsolutePath();
         String javaOpts = getParameters().getJavaOpts().get();
 
-        System.out.println("in AppLauncher: installationDir: " + installationDir);
-        System.out.println("in AppLauncher: javaHome: " + javaHome);
-        System.out.println("in AppLauncher: javaOpts: " + javaOpts);
-        System.out.println("in AppLauncher: port: " + port);
-        System.out.println("in AppLauncher: host: " + host);
+        LOGGER.info("in AppLauncher: installationDir: {}" , installationDir);
+        LOGGER.info("in AppLauncher: javaHome: {}" , javaHome);
+        LOGGER.info("in AppLauncher: javaOpts: {}" , javaOpts);
+        LOGGER.info("in AppLauncher: port: {}" , port);
+        LOGGER.info("in AppLauncher: host: {}" , host);
 
-        System.out.println("starting app...");
+        LOGGER.info("starting app...");
 
         String scriptName = Os.isFamily(Os.FAMILY_WINDOWS) ? "application.bat" : "application";
         String startScript = getParameters().getInstallationDirectory().get().getAsFile().getAbsolutePath() + "/bin/" + scriptName;
@@ -65,7 +62,7 @@ public abstract class AppLauncher implements BuildService<AppLauncher.AppLaunche
         builder.environment().put("JAVA_OPTS", getParameters().getJavaOpts().get());
         File logsDir = new File(getParameters().getInstallationDirectory().get().getAsFile(), "logs");
         logsDir.mkdirs();
-        File logFile = new File(logsDir, "app.log");
+        File logFile = new File(logsDir, "app-launcher.log");
         builder.redirectOutput(logFile);
         builder.redirectError(logFile);
         builder.redirectErrorStream(true);
@@ -78,9 +75,9 @@ public abstract class AppLauncher implements BuildService<AppLauncher.AppLaunche
         }
 
         for (String line : Files.readAllLines(logFile.toPath())) {
-            System.out.println(line);
+            LOGGER.info(line);
             if (line.contains("Server started")) {
-                System.out.println("Integration test app is ready!");
+                LOGGER.info("Integration test app is ready!");
                 break;
             }
         }
@@ -94,9 +91,11 @@ public abstract class AppLauncher implements BuildService<AppLauncher.AppLaunche
 
     @Override
     public void close() {
-        if (process != null) {
-            System.out.println("in AppLauncher.close: stopping app...");
+        if (process != null && process.isAlive()) {
+            LOGGER.info("in close: stopping process...");
             process.destroy();
+        }else{
+            LOGGER.info("in close: process was already dead.");
         }
     }
 }

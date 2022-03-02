@@ -3,4 +3,6 @@ module sample.app {
     requires jdk.httpserver;
     requires java.net.http;
     requires org.apache.commons.text;
+    requires sample.logging;
 }
+

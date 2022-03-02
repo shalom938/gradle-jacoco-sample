@@ -1,12 +1,11 @@
-package org.sk.sample.app.internal;
+package nontest;
 
 import org.sk.sample.app.Conf;
-import org.sk.sample.app.internal.client.MessagesClientMain;
 import org.sk.sample.app.server.Server;
 
 import java.io.IOException;
 
-public class SampleMain {
+class SampleMain {
 
 
     //just a testing facility.

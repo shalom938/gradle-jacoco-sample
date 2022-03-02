@@ -1,10 +1,13 @@
 package org.sk.sample.journal.impl.string;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertLinesMatch;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class StringJournalTest {
 
@@ -39,7 +42,7 @@ class StringJournalTest {
 
         List<String> asList1 = journal.list();
         List<String> asList2 = journal.list();
-        assertFalse(asList1 == asList2, "list should be different objects");
+        assertNotSame(asList1, asList2, "list should be different objects");
         assertLinesMatch(asList1, asList2, "lists are not equal");
 
     }

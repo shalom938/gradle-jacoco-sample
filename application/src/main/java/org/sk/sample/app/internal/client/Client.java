@@ -18,6 +18,7 @@ public class Client {
     private final String host;
     private final int port;
 
+    //todo: use this constructor
     public Client() {
         this(Conf.getAddress(), Conf.getPort());
     }
