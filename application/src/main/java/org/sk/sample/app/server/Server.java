@@ -4,6 +4,8 @@ import com.sun.net.httpserver.HttpContext;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.sk.sample.app.Conf;
 import org.sk.sample.messenger.Messenger;
 import org.sk.sample.utilities.HttpUtils;
@@ -31,6 +33,7 @@ public class Server {
     this example takes the two approaches just for demonstration but each of them will work.
      */
 
+    private final static Logger LOGGER = LogManager.getLogger(Server.class);
 
     private final HttpServer server;
     private final List<HttpContext> contexts = new ArrayList<>();
@@ -55,24 +58,33 @@ public class Server {
 
 
     public void start() {
+        LOGGER.info("Starting server: {}",server.getAddress());
         server.start();
+        LOGGER.info("Server started: {}",server.getAddress());
     }
 
 
     @SuppressWarnings("unused")
     public void stop() {
+        LOGGER.info("Stopping server: {}",server.getAddress());
         contexts.forEach(server::removeContext);
         stopExecutionService();
         server.stop(1);
+        LOGGER.info("Server {} stopped",server.getAddress());
     }
 
 
     private static class MessagesHttpHandler implements HttpHandler {
 
+        private static final Logger LOGGER = LogManager.getLogger(MessagesHttpHandler.class);
+
+        //todo: bug: Messenger should be created once , also MessagesJournal.
+        //test MessagesJournal limit in unit tests
         @Override
         public void handle(HttpExchange exchange) throws IOException {
             Messenger messenger = new Messenger();
             var allMessages = messenger.getAllMessages();
+            LOGGER.debug("handle invoked,messenger returned {} messages",allMessages.size());
             handleResponse(exchange, allMessages);
         }
 
@@ -88,7 +100,7 @@ public class Server {
             var queryParams = HttpUtils.getQueryParamMap(httpExchange.getRequestURI().getQuery());
 
             allMessages.forEach((k, v) -> {
-                System.out.println("got message from ".concat(k).concat(", message: ").concat(v));
+                LOGGER.debug("got message from {}, message: {}",k,v);
 
                 htmlBuilder.append("<h1> ------------------ </h1>");
                 htmlBuilder.append("<h1>");
@@ -119,8 +131,11 @@ public class Server {
 
     private class ShutdownHandler implements HttpHandler {
 
+        private final Logger LOGGER = LogManager.getLogger(ShutdownHandler.class);
+
         @Override
         public void handle(HttpExchange exchange) throws IOException {
+            LOGGER.debug("handle invoked");
             String response = "OK, Shutting down..";
             exchange.sendResponseHeaders(200, response.length());
             OutputStream os = exchange.getResponseBody();
@@ -129,25 +144,21 @@ public class Server {
             exchange.close();
 
             new Thread(() -> {
-
                 try {
                     Thread.sleep(200);
                 } catch (InterruptedException e) {
                     //todo: should rethrow the InterruptedException and restore the interrupted status ?
                 }
 
-                stopExecutionService();
-
-                System.out.println("Stopping Server...");
-                exchange.getHttpContext().getServer().stop(1);
-                System.out.println("Server Stopped!");
+                LOGGER.debug("calling server.stop...");
+                Server.this.stop();
             }).start();
         }
     }
 
 
     private void stopExecutionService() {
-        System.out.println("Stopping executor service...");
+        LOGGER.info("Stopping executor service for server {} ...",server);
         executorService.shutdown();
         try {
             executorService.awaitTermination(5, TimeUnit.SECONDS);
@@ -155,7 +166,7 @@ public class Server {
             e.printStackTrace();
         }
         executorService.shutdownNow();
-        System.out.println("Executor service stopped.");
+        LOGGER.info("Executor service for server {} stopped.",server);
     }
 
 

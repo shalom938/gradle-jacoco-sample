@@ -2,11 +2,15 @@ package org.sk.sample.plugin.applauncher;
 
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
+import org.gradle.api.logging.Logger;
+import org.gradle.api.logging.Logging;
 import org.gradle.api.provider.Provider;
 import org.gradle.jvm.toolchain.JavaLanguageVersion;
 import org.gradle.jvm.toolchain.JavaToolchainService;
 
 public class AppLauncherPlugin implements Plugin<Project> {
+
+    private static final Logger LOGGER = Logging.getLogger(AppLauncherPlugin.class);
 
     @Override
     public void apply(final Project project) {
@@ -24,9 +28,9 @@ public class AppLauncherPlugin implements Plugin<Project> {
 
 
         project.afterEvaluate(project1 -> {
-            Provider<AppLauncher> serviceProvider = project1.getGradle().getSharedServices().
+            project1.getGradle().getSharedServices().
                     registerIfAbsent("appLauncher", AppLauncher.class, spec -> {
-                        System.out.println("configuring AppLauncher parameters");
+                        LOGGER.info("configuring AppLauncher parameters");
                         spec.getParameters().getJavaHome().set(extension.getJavaHome().get());
                         spec.getParameters().getHost().set(extension.getHost().get());
                         spec.getParameters().getPort().set(extension.getPort().get());

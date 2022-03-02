@@ -3,8 +3,16 @@ plugins {
 }
 
 dependencies {
+    implementation project(':logging')
     implementation project(':message-provider')
     implementation project(':message-journal')
+}
+
+
+
+processIntegrationTestResources{
+    //see: https://github.com/gradle/gradle/issues/17236
+    duplicatesStrategy = DuplicatesStrategy.WARN
 }
 
 

@@ -32,6 +32,7 @@ appLauncher{
 
 
 dependencies {
+    implementation project(':logging')
     implementation project(':messaging')
     implementation project(':utilities')
     implementation libs.commons.text
@@ -40,7 +41,33 @@ dependencies {
 application {
     mainModule = 'sample.app'
     mainClass = 'org.sk.sample.app.AppMain'
+    applicationDefaultJvmArgs = ['-Dapplication.home=MY_APP_HOME', '-Dlog4j.configurationFile=MY_APP_HOME/conf/log4j2.yaml']
+    //'-Dlog4j2.debug=true',
 }
+
+/*
+we want log4j configuration file in a conf folder under the app home and to configure log4j with
+-Dlog4j.configurationFile. the file is in src/dist/conf, src/dist is copied by the application plugin.
+there is currently no standard way to do that with the application plugin.
+there is a way to add a folder to the classpath:
+https://discuss.gradle.org/t/classpath-in-application-plugin-is-building-always-relative-to-app-home-lib-directory/2012/5
+but i don't want this folder in the classpath.
+the other solution is to add -Dlog4j.configurationFile=MY_APP_HOME/conf/log4j2.yaml
+and then replace in the generated scripts MY_APP_HOME with $APP_HOME which works!
+https://www.yihaomen.com/article/826.html
+using the same trick to add a system property -Dapplication.home=MY_APP_HOME that is used in
+log4j2.yaml to configure the logs folder.
+*/
+startScripts {
+    doLast {
+        unixScript.text = unixScript.text.replace('MY_APP_HOME', '\$APP_HOME')
+        windowsScript.text = windowsScript.text.replace('MY_APP_HOME', '%APP_HOME%')
+    }
+}
+
+
+
+
 
 
 /*
@@ -54,12 +81,14 @@ module messenger has separate test suites for whitebox and blackbox testing whic
 This module also adds integration tests.
 the integration tests are simple unit tests and they run against a real application.
 the real app is started by a gradle build service AppLauncher.
-the integrationTest task depends on the check lifecycle task so it will run on every build.
+the check lifecycle task depends on integrationTest task so it will run on every build.
  */
 
 
 /*
     starting the application before the integration tests start:
+    this example adds a custom test task 'IntegrationTest' , its just for playing with gradle but can
+    be achieved without a custom task class and with doFirst.
     in this example the app is started from a build service AppLauncher.
     the service is installed by AppLauncherPlugin which also adds an extension to this project called
     'appLauncher' which can be used to configure the AppLauncher service.
@@ -68,18 +97,17 @@ the integrationTest task depends on the check lifecycle task so it will run on e
     by the application plugin.
     the integration tests is a custom Test task that starts and stops the server using AppLauncher before the unit
     tests start.
+    the custom task 'IntegrationTest' is installed here as a JvmTestSuiteTarget.
     Notes:
     the build service can only be configured once per build, although its defined in this project it is global for the build.
     its a kind of singleton, can only start one server.
     for the purpose of this project its enough and better then start/stop server tasks.
+
  */
 
 
 /*
- todo: some issues to consult the gradle community:
- i understand that a build service is per the whole project and is singleton, but is it ok the way i did
- it with start/stop called from the integration test task
- how to replace the Test task to custom task in JvmTestSuite , see how i did it
+todo: do it without a custom Test task class
  */
 
 def suite = testing.suites.register('appIntegrationTest',JvmTestSuite).get()
@@ -100,13 +128,15 @@ testing {
                         }
 
                         failFast = true
-                        //because currently can't run more then one instance of the server
+                        //to run tests in parallel need to supply different port for every Server
+                        //instance created in unit tests. maybe via system properties that org.sk.sample.app.Conf.PORT reads.
                         maxParallelForks = 1
                     }
                 }
             }
         }
 
+        //todo: change to 'integrationTest' task
         appIntegrationTest(JvmTestSuite) {
             useJUnitJupiter(testinglibs.versions.junit.jupiter.get())
             sources {
@@ -162,7 +192,7 @@ testing {
 //                            ext.appLauncher.close()
                         }
 
-                        //send the host and port system properties to the unit tests
+                        //send the host and port system properties to the unit tests to initialize the client
                         jvmArgs = [integrationTestServerHostPropVal,integrationTestServerPortPropVal]
                         minHeapSize = "128m"
                         maxHeapSize = "512m"

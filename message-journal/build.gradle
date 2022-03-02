@@ -3,6 +3,7 @@ plugins {
 }
 
 dependencies {
+    implementation project(':logging')
     implementation project(':utilities')
     //journals-all is from an included build
     api 'org.sk.sample.journal:journals-all:1.0'

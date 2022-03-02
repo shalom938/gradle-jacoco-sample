@@ -17,6 +17,7 @@ public interface MessageProvider {
         return Optional.of(capitalize(nextMessage().orElse(null)));
     }
 
+    //todo: change to abbreviate
     default String capitalize(String message) {
         return StringUtils.capitalize(message);
     }

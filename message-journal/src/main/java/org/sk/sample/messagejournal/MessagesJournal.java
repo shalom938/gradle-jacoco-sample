@@ -1,5 +1,7 @@
 package org.sk.sample.messagejournal;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.sk.sample.journal.Journal;
 import org.sk.sample.journals.Journals;
 import org.sk.sample.journals.exception.JournalInitException;
@@ -9,7 +11,10 @@ import java.util.List;
 
 public interface MessagesJournal extends Journal<String> {
 
+    Logger LOGGER = LogManager.getLogger();
+
     static MessagesJournal create() {
+        LOGGER.info("creating a new MessagesJournal");
         return new MessagesJournal() {
 
             private final Journal<String> stringJournal;
@@ -24,11 +29,13 @@ public interface MessagesJournal extends Journal<String> {
 
             @Override
             public boolean add(String item) {
+                LOGGER.trace("adding '{}' to journal",item);
                 return stringJournal.add(item);
             }
 
             @Override
             public boolean remove(String item) {
+                LOGGER.trace("removing '{}' from journal",item);
                 return stringJournal.remove(item);
             }
 
@@ -44,6 +51,7 @@ public interface MessagesJournal extends Journal<String> {
 
             @Override
             public void clear() {
+                LOGGER.trace("clearing journal");
                 stringJournal.clear();
             }
 

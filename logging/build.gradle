@@ -1,0 +1,11 @@
+plugins {
+    id 'java-library'
+}
+
+dependencies {
+    api platform('org.apache.logging.log4j:log4j-bom:'+libs.versions.log4j2.version.get())
+    api 'org.apache.logging.log4j:log4j-api'
+    implementation 'org.apache.logging.log4j:log4j-core'
+    implementation libs.jackson.databind.get()
+    implementation libs.jackson.dataformat.yaml.get()
+}

@@ -1,0 +1,63 @@
+Configuration:
+  status: warn
+  name: MyYAMLConfigTest
+  properties:
+    property:
+      name: filename
+      value: ${sys:application.home}/logs/app.log
+  appenders:
+    Console:
+      name: STDOUT
+      target: SYSTEM_OUT
+      PatternLayout:
+        Pattern: "%d [%t] %p %-20.-20c{1} %m%n"
+      Filters:
+        ThresholdFilter:
+          level: debug
+    File:
+      name: AppLog
+      fileName: ${filename}
+      PatternLayout:
+        Pattern: "%d [%t] %p %-20.-20c{1} %m%n"
+      Filters:
+        ThresholdFilter:
+          level: trace
+  Loggers:
+    logger:
+      -
+        name: org.sk.sample.app
+        level: debug
+        additivity: false
+        AppenderRef:
+          - ref: STDOUT
+          - ref: AppLog
+      -
+        name: org.sk.sample.messenger
+        level: debug
+        additivity: false
+        AppenderRef:
+          - ref: AppLog
+      -
+        name: org.sk.sample.messagejournal
+        level: trace
+        additivity: false
+        AppenderRef:
+          - ref: AppLog
+      -
+        name: org.sk.sample.env
+        level: debug
+        additivity: false
+        AppenderRef:
+          - ref: AppLog
+      -
+        name: org.sk.sample.cmd
+        level: debug
+        additivity: false
+        AppenderRef:
+          - ref: AppLog
+    Root:
+      level: warn
+      AppenderRef:
+        - ref: STDOUT
+        - ref: AppLog
+

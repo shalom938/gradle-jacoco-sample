@@ -15,6 +15,7 @@ include 'env-message-provider'
 include 'message-journal'
 include 'messenger'
 include 'messaging'
+include 'logging'
 include 'application'
 
 
@@ -24,9 +25,12 @@ dependencyResolutionManagement {
     versionCatalogs {
         libs {
             version('java-version', '11')
+            version('log4j2-version', '2.17.1')
             alias('google-guava').to('com.google.guava:guava:31.0.1-jre')
             alias('commons-lang3').to('org.apache.commons:commons-lang3:3.12.0')
             alias('commons-text').to('org.apache.commons:commons-text:1.9')
+            alias('jackson-databind').to('com.fasterxml.jackson.core:jackson-databind:2.13.1')
+            alias('jackson-dataformat-yaml').to('com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.13.1')
         }
         testinglibs {
             version('junit-jupiter', '5.7.2')

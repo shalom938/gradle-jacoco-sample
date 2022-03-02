@@ -30,3 +30,53 @@ the main app starts a HttpServer that has two end points: msgs and shutdown.
 ## build
 
 ./gradlew clean build
+
+
+
+## log4j2:
+
+to debug log4j initialization:
+export APPLICATION_OPTS=-Dlog4j2.debug=true
+see: https://logging.apache.org/log4j/2.x/manual/configuration.html#StatusMessages
+
+log4j is used only in production code, unit tests code print to stdout.
+
+log4j and required libraries need to be in the module path, they can be added with --add-modules
+or can be required by consumer modules.
+for yaml configuration two more libraries are required: jackson-databind and jackson-dataformat-yaml.
+java.scripting module is also required by log4j.
+ 
+so either:
+'--add-modules org.apache.logging.log4j,org.apache.logging.log4j.core,java.scripting,com.fasterxml.jackson.databind,com.fasterxml.jackson.dataformat.yaml'
+for example:
+export APPLICATION_OPTS="-Dorg.apache.logging.log4j.simplelog.StatusLogger.level=TRACE 
+    --add-modules org.apache.logging.log4j,org.apache.logging.log4j.core,java.scripting,com.fasterxml.jackson.databind,com.fasterxml.jackson.dataformat.yaml"
+or can be added to the application plugin with applicationDefaultJvmArgs.
+
+or can be added to the module-info.java of every module that wants logging:
+requires org.apache.logging.log4j;
+requires org.apache.logging.log4j.core;
+requires java.scripting;
+requires com.fasterxml.jackson.databind;
+requires com.fasterxml.jackson.dataformat.yaml;
+
+module org.apache.logging.log4j must be in every module-info.java for compilation.
+
+the application uses the required directive in module-info.java. but instead of repeating the requires for log4j in 
+every module, there is a logging module, its a container module that only requires the mecessary log4j modules. 
+and so other modules can just require 'sample.logging' and add a gradle dependency to logging module. 
+
+the app uses yaml configuration. the file is in src/dist/conf/log4j2.yaml and is copied to the 
+distribution to APP_HOME/conf.  and using -Dlog4j.configurationFile to configure log4j with the location.
+so the file is not in the classpath.
+for unit tests we use xml configuration. so actually only the 'application' module needs the jackson 
+modules because its the module that initializes log4j when starting the app. 
+
+every test suite has a log4j2-test.xml in the classpath and this is the configuration that will be used in 
+unit testing. the configuration status is set to debug so log4j2 debug info can be found in the test 
+results system-out. actually only the first test to run will contain the log4j debug info.
+log4j2-test.xml has a different pattern layout where the date is COMPACT, so lines starting with 
+something like '20220302123403955 [Test worker] INFO' are our messages. 
+the unit tests output can be found in build/test-results of every module.
+ 
+todo: logging from journals. maybe log with slf4j , and in runtime add slf4j to log4j bridge

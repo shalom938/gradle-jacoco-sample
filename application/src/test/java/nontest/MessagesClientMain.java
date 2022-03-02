@@ -1,11 +1,12 @@
-package org.sk.sample.app.internal.client;
+package nontest;
 
 import org.sk.sample.app.Conf;
+import org.sk.sample.app.internal.client.Client;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
 
-public class MessagesClientMain {
+class MessagesClientMain {
 
     public static void main(String[] args) {
         try {
