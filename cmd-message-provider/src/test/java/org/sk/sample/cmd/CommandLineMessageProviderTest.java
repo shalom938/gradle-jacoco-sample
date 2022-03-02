@@ -21,7 +21,7 @@ class CommandLineMessageProviderTest {
 
 
     @Test
-    void testCmdProvider() {
+    void testNextMessage() {
 
         Printer.printEnv(getClass().getSimpleName());
 

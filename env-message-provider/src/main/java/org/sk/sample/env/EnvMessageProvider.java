@@ -24,7 +24,7 @@ public class EnvMessageProvider implements MessageProvider {
         System.getProperties().forEach((k, v) -> msgBuilder.append(k).append("=").append(v).append(","));
         msgBuilder.append(System.lineSeparator());
         Optional<String> result = Optional.of(msgBuilder.toString());
-        LOGGER.debug("nextMessage invoked, returning: {}",result.orElseGet(null));
+        LOGGER.trace("nextMessage invoked, returning: {}",result.orElseGet(null));
         return result;
     }
 }

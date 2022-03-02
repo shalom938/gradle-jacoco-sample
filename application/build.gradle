@@ -1,15 +1,14 @@
 plugins {
     //not using sample.java-application-conventions-with-it because in this project we want a custom test task
     //for integration tests
-    id 'sample.java-application-conventions'
+    id 'sample.java-application-conventions-with-it'
     id 'org.sk.sample.plugin.applauncher.AppLauncherPlugin'
     alias(pluginslibs.plugins.moduleplugin)
 }
 
 ext{
     //the application takes host and port from system properties and has defaults.
-    //here we can change it by sending the system properties to the integration tests task,
-    //the startServer and the stopServer.
+    //here we can change it by sending the system properties to the integration tests task.
     //the tests in the test suite also start a server but it will be with the default hard coded port.
     //changing the port for integration tests makes it possible that the test suite and integrationTest
     //suite can run at the same time.
@@ -91,7 +90,7 @@ the check lifecycle task depends on integrationTest task so it will run on every
     be achieved without a custom task class and with doFirst.
     in this example the app is started from a build service AppLauncher.
     the service is installed by AppLauncherPlugin which also adds an extension to this project called
-    'appLauncher' which can be used to configure the AppLauncher service.
+    'appLauncher' that can be used to configure the AppLauncher service.
     the AppLauncher executes the app installed by the task 'installDist' which is provided by the application plugin
     and installs the app in the build directory. another option would be to use the distribution zip that is always created
     by the application plugin.
@@ -106,13 +105,6 @@ the check lifecycle task depends on integrationTest task so it will run on every
  */
 
 
-/*
-todo: do it without a custom Test task class
- */
-
-def suite = testing.suites.register('appIntegrationTest',JvmTestSuite).get()
-suite.targets.registerBinding(org.sk.sample.plugin.applauncher.MyJvmTestSuiteTarget.class, org.sk.sample.plugin.applauncher.MyDefaultJvmTestSuiteTarget.class)
-
 testing {
     suites {
         test {
@@ -123,10 +115,6 @@ testing {
                 all {
                     testTask.configure {
 
-                        beforeTest { descriptor ->
-                            logger.lifecycle("Running test: " + descriptor)
-                        }
-
                         failFast = true
                         //to run tests in parallel need to supply different port for every Server
                         //instance created in unit tests. maybe via system properties that org.sk.sample.app.Conf.PORT reads.
@@ -136,20 +124,9 @@ testing {
             }
         }
 
-        //todo: change to 'integrationTest' task
-        appIntegrationTest(JvmTestSuite) {
-            useJUnitJupiter(testinglibs.versions.junit.jupiter.get())
-            sources {
-                java {
-                    srcDir 'src/integrationTest/java'
-                }
-                resources {
-                    srcDir 'src/integrationTest/resources'
-                }
-            }
+        integrationTest{
+
             dependencies {
-                implementation project
-                implementation project(':test-utils')
                 implementation libs.commons.lang3
                 //the project's dependency for message-provider is implementation which does not
                 // expose it to this test suite because this test suite is a module. blackbox testing.
@@ -159,37 +136,23 @@ testing {
                 runtimeOnly project(':env-message-provider')
             }
 
-            //targets.registerBinding(org.sk.sample.plugin.applauncher.MyJvmTestSuiteTarget.class, org.sk.sample.plugin.applauncher.MyDefaultJvmTestSuiteTarget.class)
-            //targets.getByName('appIntegrationTest').getTestTask().get().setEnabled(false)
             targets {
                 all {
                     testTask.configure {
-                        println "configuring enabled = false for task "+name + ",type "+it.getClass()
-                        enabled = false
-                    }
-                }
-                myAppIntegrationTest(org.sk.sample.plugin.applauncher.MyJvmTestSuiteTarget.class){
-                    println "in suite $name, class: "+it.getClass()
-                    //println "test task $name, class: "+it.getTestTask().get().getClass()
-                    testTask.configure {
-                        println "configuring $name, class: "+it.getClass()
-                        enabled = true
 
-                        beforeTest { descriptor ->
-                            logger.lifecycle("Running test: " + descriptor)
-                        }
+                        logger.lifecycle("configuring $name in project ${project.name}")
 
                         doFirst{
-                            println "in myAppIntegrationTest task doFirst ,name: "+name +", class:"+it.getClass()
-//                            ext.appLauncher = project.getGradle().getSharedServices().getRegistrations().getByName('appLauncher').getService().get()
-//                            ext.appLauncher.startApp()
+                            logger.lifecycle("in $name task doFirst, starting appLauncher")
+                            ext.appLauncher = project.getGradle().getSharedServices().getRegistrations().getByName('appLauncher').getService().get()
+                            ext.appLauncher.startApp()
                         }
 
                         doLast{
-                            println "in myAppIntegrationTest task doLast"
-//                            println "Stopping integration test app.."
-//                            println "Response from shutdown: " + sendHttpGet(integrationTestServerHost,integrationTestServerPort,'shutdown')
-//                            ext.appLauncher.close()
+                            logger.lifecycle("in $name task doLast, stopping app by calling shutdown")
+                            def response = sendHttpGet(integrationTestServerHost,integrationTestServerPort,'shutdown')
+                            logger.lifecycle("Response from shutdown: {}",response)
+                            ext.appLauncher.close()
                         }
 
                         //send the host and port system properties to the unit tests to initialize the client
@@ -200,19 +163,12 @@ testing {
                         maxParallelForks = 1
                         forkEvery = 1
                         dependsOn('installDist')//installDist is from application plugin
-                        //strong ordering, startServer is also mustRunAfter(test) otherwise
-                        //there may be a situation that startServer will be called at the same
-                        //time with test.
-                        // todo: after changing the port for integration tests server this may not be necessary anymore
                         mustRunAfter(test)
                     }
                 }
             }
+
         }
     }
 }
 
-
-tasks.named('check') {
-    dependsOn(testing.suites.appIntegrationTest)
-}
