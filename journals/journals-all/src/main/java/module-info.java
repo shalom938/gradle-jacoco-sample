@@ -6,7 +6,7 @@ module sample.journal.all {
     requires transitive sample.journal;
     requires sample.journal.impl;
     requires org.apache.commons.lang3;
-
+    requires org.slf4j;
     exports org.sk.sample.journals;
     exports org.sk.sample.journals.exception;
 }

@@ -14,6 +14,8 @@ dependencyResolutionManagement {
             // gradle resolves the version from the main project.
             alias('google-guava').to('com.google.guava:guava:30.1.1-jre')
             alias('commons-lang3').to('org.apache.commons:commons-lang3:3.12.0')
+            alias('slf4j-api').to('org.slf4j:slf4j-api:1.7.36')
+            alias('slf4j-simple').to('org.slf4j:slf4j-simple:1.7.36')
         }
         testinglibs {
             version('junit-jupiter', '5.7.2')

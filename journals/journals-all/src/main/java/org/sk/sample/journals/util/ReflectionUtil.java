@@ -4,9 +4,13 @@ import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.reflect.ConstructorUtils;
 import org.sk.sample.journal.Journal;
 import org.sk.sample.journals.exception.JournalInitException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @SuppressWarnings("unchecked")
 public class ReflectionUtil {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ReflectionUtil.class);
 
     private static final String STRING_JOURNAL_CLS = "org.sk.sample.journal.impl.string.StringJournal";
 
@@ -21,6 +25,7 @@ public class ReflectionUtil {
 
     public static Journal<String> createStringJournal() throws JournalInitException {
 
+        LOGGER.debug("Creating string journal");
         try {
             Class<? extends Journal<String>> cls = (Class<? extends Journal<String>>) ClassUtils.getClass(STRING_JOURNAL_CLS);
             return ConstructorUtils.invokeConstructor(cls);
@@ -31,6 +36,8 @@ public class ReflectionUtil {
 
 
     public static Journal<String> createStringJournal(int maxSize) throws JournalInitException {
+
+        LOGGER.debug("Creating string journal with size {}",maxSize);
         try {
             Class<? extends Journal<String>> cls = (Class<? extends Journal<String>>) ClassUtils.getClass(STRING_JOURNAL_CLS);
             return ConstructorUtils.invokeConstructor(cls, maxSize);
