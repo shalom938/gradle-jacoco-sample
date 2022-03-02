@@ -48,11 +48,14 @@ public class Server {
     }
 
     public Server(String addr, int port) throws IOException {
+        LOGGER.info("Creating a new HttpServer for {}:{}",addr,port);
         server = HttpServer.create(new InetSocketAddress(addr, port), 0);
         server.setExecutor(executorService);
+        LOGGER.info("Adding a new MessagesHttpHandler for {}",server);
         contexts.add(server.createContext("/msgs", new MessagesHttpHandler()));
         //ShutdownHandler is a nested class and is associated with an instance, it needs access
         // to stop the executor service.
+        LOGGER.info("Adding a new ShutdownHandler for {}",server);
         contexts.add(server.createContext("/shutdown", this.new ShutdownHandler()));
     }
 
@@ -78,11 +81,10 @@ public class Server {
 
         private static final Logger LOGGER = LogManager.getLogger(MessagesHttpHandler.class);
 
-        //todo: bug: Messenger should be created once , also MessagesJournal.
-        //test MessagesJournal limit in unit tests
+        private final Messenger messenger = new Messenger();
+
         @Override
         public void handle(HttpExchange exchange) throws IOException {
-            Messenger messenger = new Messenger();
             var allMessages = messenger.getAllMessages();
             LOGGER.debug("handle invoked,messenger returned {} messages",allMessages.size());
             handleResponse(exchange, allMessages);

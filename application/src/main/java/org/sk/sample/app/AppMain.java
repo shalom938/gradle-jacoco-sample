@@ -15,7 +15,7 @@ public class AppMain {
         LOGGER.info("Started application with command line: {}",ProcessHandle.current().info().commandLine());
         LOGGER.info("Starting HTTP server ");
         try {
-            Server server = new Server(Conf.getAddress(), Conf.getPort());
+            Server server = new Server();
             server.start();
         }catch (Exception e){
             LOGGER.error("Could not start server", e);
