@@ -60,6 +60,16 @@ testing {
                 runtimeOnly project(':cmd-message-provider')
                 runtimeOnly project(':env-message-provider')
             }
+//            targets {
+//                all {
+//                    testTask.configure {
+////                        testLogging{
+////                            showStandardStreams = false
+////                        }
+//                        jvmArgs += ['-Dlog4j2.debug=true']
+//                    }
+//                }
+            }
         }
     }
 }

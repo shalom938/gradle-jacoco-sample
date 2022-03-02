@@ -24,10 +24,10 @@ public class Messenger {
         ServiceLoader<MessageProvider> serviceLoader = ServiceLoader.load(MessageProvider.class);
         LOGGER.debug("found {} MessageProvider's ",serviceLoader.stream().count());
         serviceLoader.forEach(messageProvider -> {
-            LOGGER.debug("got provider {}",messageProvider);
+            LOGGER.trace("got provider {}",messageProvider);
             String msg = internalHelper.getMessageFromProvider(messageProvider);
             if (msg != null) {
-                LOGGER.debug("got message {} from provider {}",msg,messageProvider);
+                LOGGER.trace("got message {} from provider {}",msg,messageProvider);
                 messages.put(messageProvider.toString(), msg);
                 journal.add(msg);
             }

@@ -19,7 +19,7 @@ project.afterEvaluate {
     tasks.withType(Test).configureEach() {
         testLogging {
             showStandardStreams project.hasProperty("show.unit.tests.stdout")
-            events "passed", "skipped", "failed"
+            events "started","passed", "skipped", "failed"
             showStackTraces true
             exceptionFormat 'full'
             showCauses true

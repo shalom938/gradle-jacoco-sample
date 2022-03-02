@@ -12,4 +12,5 @@ module sample.logging {
     requires java.scripting; //required by log4j
     requires com.fasterxml.jackson.databind;
     requires com.fasterxml.jackson.dataformat.yaml;
+//    requires org.apache.logging.log4j.slf4j;
 }

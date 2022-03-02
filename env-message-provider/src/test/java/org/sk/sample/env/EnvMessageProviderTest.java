@@ -21,7 +21,7 @@ class EnvMessageProviderTest {
 
 
     @Test
-    void testEnvProvider() {
+    void testNextMessage() {
 
         Printer.printEnv(getClass().getSimpleName());
 

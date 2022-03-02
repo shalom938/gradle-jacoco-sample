@@ -31,6 +31,8 @@ the main app starts a HttpServer that has two end points: msgs and shutdown.
 
 ./gradlew clean build
 
+to show stdout from unit tests add -Pshow.unit.tests.stdout=true
+
 
 ## journals
 journals is an included build , the project provides a journals. 

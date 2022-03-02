@@ -13,7 +13,7 @@ Configuration:
         Pattern: "%d [%t] %p %-20.-20c{1} %m%n"
       Filters:
         ThresholdFilter:
-          level: debug
+          level: info
     File:
       name: AppLog
       fileName: ${filename}

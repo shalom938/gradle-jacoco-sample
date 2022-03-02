@@ -17,7 +17,7 @@ public class CommandLineMessageProvider implements MessageProvider {
     @Override
     public Optional<String> nextMessage() {
         Optional<String> result = Optional.of(capitalize(ProcessHandle.current().info().commandLine().orElse(null)));
-        LOGGER.debug("nextMessage invoked, returning: {}",result.orElseGet(null));
+        LOGGER.trace("nextMessage invoked, returning: {}",result.orElseGet(null));
         return result;
     }
 }
