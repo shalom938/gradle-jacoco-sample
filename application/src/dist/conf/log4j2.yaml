@@ -17,6 +17,7 @@ Configuration:
     File:
       name: AppLog
       fileName: ${filename}
+      append: false
       PatternLayout:
         Pattern: "%d [%t] %p %-20.-20c{1} %m%n"
       Filters:
